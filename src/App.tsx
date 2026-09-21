@@ -6,6 +6,9 @@ import ConfigSection from './components/ConfigSection';
 import SetupSection from './components/SetupSection';
 import PromptSection from './components/PromptSection';
 import StepsSection from './components/StepsSection';
+import ComparisonSection from './components/ComparisonSection';
+import RoadmapSection from './components/RoadmapSection';
+import BestPracticesSection from './components/BestPracticesSection';
 import FAQSection from './components/FAQSection';
 import Footer from './components/Footer';
 import ReadingProgress from './components/ReadingProgress';
@@ -16,7 +19,7 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['hero', 'config', 'setup', 'prompt', 'steps', 'faq'];
+      const sections = ['hero', 'features', 'config', 'setup', 'prompt', 'steps', 'comparison', 'roadmap', 'practices', 'faq'];
       const scrollPos = window.scrollY + 200;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -42,6 +45,9 @@ export default function App() {
       <SetupSection />
       <PromptSection />
       <StepsSection />
+      <ComparisonSection />
+      <RoadmapSection />
+      <BestPracticesSection />
       <FAQSection />
       <Footer />
       <ScrollToTop />

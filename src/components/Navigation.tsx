@@ -10,10 +10,14 @@ export default function Navigation({ activeSection, setActiveSection }: Navigati
 
   const links = [
     { id: 'hero', label: 'الرئيسية' },
+    { id: 'features', label: 'المميزات' },
     { id: 'config', label: 'التكوين' },
     { id: 'setup', label: 'الإعداد' },
     { id: 'prompt', label: 'الموجه' },
     { id: 'steps', label: 'التشغيل' },
+    { id: 'comparison', label: 'المقارنة' },
+    { id: 'roadmap', label: 'الخارطة' },
+    { id: 'practices', label: 'الممارسات' },
     { id: 'faq', label: 'FAQ' },
   ];
 
