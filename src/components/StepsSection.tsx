@@ -1,10 +1,14 @@
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
+
 export default function StepsSection() {
+  const { ref, isVisible } = useScrollAnimation(0.1);
+
   return (
     <section id="steps" className="py-24 px-4 relative">
       {/* Background accent */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-purple-950/20 to-transparent"></div>
       
-      <div className="relative max-w-6xl mx-auto">
+      <div ref={ref} className={`relative max-w-6xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         {/* Section header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-green-300 text-sm mb-4">

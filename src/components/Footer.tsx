@@ -25,6 +25,7 @@ export default function Footer() {
                 { label: 'MCP Protocol', url: 'https://modelcontextprotocol.io' },
                 { label: 'Semgrep', url: 'https://semgrep.io' },
                 { label: 'VS Code', url: 'https://code.visualstudio.com' },
+                { label: 'Qwen Coder', url: 'https://huggingface.co/Qwen' },
               ].map((link) => (
                 <li key={link.label}>
                   <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-white text-sm transition-colors">

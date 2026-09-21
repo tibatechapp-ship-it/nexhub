@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import CodeBlock from './CodeBlock';
+import { useScrollAnimation } from '../hooks/useScrollAnimation';
 
 const configCode = `{
   "mcpServers": {
@@ -45,6 +46,7 @@ const configCode = `{
 
 export default function ConfigSection() {
   const [copied, setCopied] = useState(false);
+  const { ref, isVisible } = useScrollAnimation(0.1);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(configCode);
@@ -54,7 +56,7 @@ export default function ConfigSection() {
 
   return (
     <section id="config" className="py-24 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div ref={ref} className={`max-w-6xl mx-auto transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
         {/* Section header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-sm mb-4">
