@@ -1,25 +1,22 @@
 import { useState, useEffect } from 'react';
-import Hero from './components/Hero';
-import Navigation from './components/Navigation';
-import FeaturesSection from './components/FeaturesSection';
-import ConfigSection from './components/ConfigSection';
-import SetupSection from './components/SetupSection';
-import PromptSection from './components/PromptSection';
-import StepsSection from './components/StepsSection';
-import ComparisonSection from './components/ComparisonSection';
-import RoadmapSection from './components/RoadmapSection';
-import BestPracticesSection from './components/BestPracticesSection';
-import FAQSection from './components/FAQSection';
-import Footer from './components/Footer';
-import ReadingProgress from './components/ReadingProgress';
-import ScrollToTop from './components/ScrollToTop';
+import Navigation from './components/layout/Navigation';
+import Hero from './components/sections/Hero';
+import HowItWorks from './components/sections/HowItWorks';
+import Features from './components/sections/Features';
+import Setup from './components/sections/Setup';
+import Comparison from './components/sections/Comparison';
+import Roadmap from './components/sections/Roadmap';
+import FAQ from './components/sections/FAQ';
+import Footer from './components/layout/Footer';
+import ReadingProgress from './components/ui/ReadingProgress';
+import ScrollToTop from './components/ui/ScrollToTop';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('hero');
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['hero', 'features', 'config', 'setup', 'prompt', 'steps', 'comparison', 'roadmap', 'practices', 'faq'];
+      const sections = ['hero', 'how-it-works', 'features', 'setup', 'comparison', 'roadmap', 'faq'];
       const scrollPos = window.scrollY + 200;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -36,19 +33,16 @@ export default function App() {
   }, []);
 
   return (
-    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white" style={{ fontFamily: "'Segoe UI', Tahoma, Arial, sans-serif" }}>
+    <div dir="rtl" className="min-h-screen bg-slate-950 text-white overflow-x-hidden">
       <ReadingProgress />
       <Navigation activeSection={activeSection} setActiveSection={setActiveSection} />
       <Hero />
-      <FeaturesSection />
-      <ConfigSection />
-      <SetupSection />
-      <PromptSection />
-      <StepsSection />
-      <ComparisonSection />
-      <RoadmapSection />
-      <BestPracticesSection />
-      <FAQSection />
+      <HowItWorks />
+      <Features />
+      <Setup />
+      <Comparison />
+      <Roadmap />
+      <FAQ />
       <Footer />
       <ScrollToTop />
     </div>
