@@ -1,0 +1,27 @@
+# Flutter
+*.iml
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+.dart_tool/
+*.lock.bak
+
+# Drift generated (CI regenerates)
+*.g.dart
+!lib/shared/data/database.g.dart
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Nexus local data
+*.sqlite
+*.nexb
