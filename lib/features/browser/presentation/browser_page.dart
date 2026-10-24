@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../application/browser_providers.dart';
+import '../../status/presentation/branches_sheet.dart';
+import '../../status/presentation/status_sheet.dart';
 import 'file_tree_widget.dart';
 import 'file_viewer_widget.dart';
 import 'search_delegate.dart';
@@ -40,6 +42,16 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
           appBar: AppBar(
             title: Text(repo.name),
             actions: [
+              IconButton(
+                tooltip: 'الفروع',
+                icon: const Icon(Icons.account_tree_outlined),
+                onPressed: () => BranchesSheet.show(context, repo.path),
+              ),
+              IconButton(
+                tooltip: 'الحالة',
+                icon: const Icon(Icons.change_circle_outlined),
+                onPressed: () => StatusSheet.show(context, repo.path),
+              ),
               IconButton(
                 tooltip: l.search,
                 icon: const Icon(Icons.search),

@@ -8,6 +8,7 @@ import 'package:flutter_highlight/themes/atom-one-light.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../core/l10n/app_localizations.dart';
+import '../../ai/presentation/explain_sheet.dart';
 
 class FileViewerWidget extends StatelessWidget {
   const FileViewerWidget({required this.file, super.key});
@@ -32,40 +33,78 @@ class FileViewerWidget extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         final d = snap.data!;
-        switch (d.kind) {
-          case _Kind.binary:
-            return Center(child: Text(l.binaryFile));
-          case _Kind.tooLarge:
-            return Center(child: Text(l.fileTooLarge));
-          case _Kind.text:
-            if (d.ext == '.md' || d.ext == '.markdown') {
-              return Markdown(
-                data: d.text!,
-                selectable: true,
-                padding: const EdgeInsets.all(16),
-              );
-            }
-            final dark = Theme.of(context).brightness == Brightness.dark;
-            final lang = _langFromExt(d.ext);
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(12),
-                child: HighlightView(
-                  d.text!,
-                  language: lang,
-                  theme: dark ? atomOneDarkTheme : atomOneLightTheme,
-                  padding: EdgeInsets.zero,
-                  textStyle: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 13,
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: Row(
+                children: [
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      f.path.split(RegExp(r'[/\\]')).last,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
                   ),
-                ),
+                  TextButton.icon(
+                    onPressed: d.kind == _Kind.text
+                        ? () => ExplainSheet.show(
+                              context,
+                              code: d.text!.length > 6000
+                                  ? d.text!.substring(0, 6000)
+                                  : d.text!,
+                              fileName: f.path.split(RegExp(r'[/\\]')).last,
+                            )
+                        : null,
+                    icon: const Icon(Icons.smart_toy_outlined, size: 18),
+                    label: const Text('اشرح'),
+                  ),
+                ],
               ),
-            );
-        }
+            ),
+            Expanded(child: _content(context, d, l)),
+          ],
+        );
       },
     );
+  }
+
+  Widget _content(BuildContext context, FileData d, AppLocalizations l) {
+    switch (d.kind) {
+      case _Kind.binary:
+        return Center(child: Text(l.binaryFile));
+      case _Kind.tooLarge:
+        return Center(child: Text(l.fileTooLarge));
+      case _Kind.text:
+        if (d.ext == '.md' || d.ext == '.markdown') {
+          return Markdown(
+            data: d.text!,
+            selectable: true,
+            padding: const EdgeInsets.all(16),
+          );
+        }
+        final dark = Theme.of(context).brightness == Brightness.dark;
+        final lang = _langFromExt(d.ext);
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(12),
+            child: HighlightView(
+              d.text!,
+              language: lang,
+              theme: dark ? atomOneDarkTheme : atomOneLightTheme,
+              padding: EdgeInsets.zero,
+              textStyle: const TextStyle(
+                fontFamily: 'monospace',
+                fontSize: 13,
+              ),
+            ),
+          ),
+        );
+    }
   }
 
   Future<FileData> _load(File f) async {
