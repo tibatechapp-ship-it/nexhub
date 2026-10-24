@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/l10n/app_localizations.dart';
 import '../../git/application/git_providers.dart';
 import '../../git/data/git_service.dart';
+import '../../journal/presentation/journal_sheet.dart';
 import '../../workspace/application/workspace_providers.dart';
 
 class HistoryPage extends ConsumerWidget {
@@ -142,6 +143,16 @@ class _CommitTile extends StatelessWidget {
         '${commit.author} · ${commit.shortHash} · ${_fmtDate(commit.date)}',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
+      ),
+      trailing: IconButton(
+        icon: const Icon(Icons.menu_book_outlined, size: 20),
+        tooltip: 'مذكرات',
+        onPressed: () => JournalSheet.show(
+          context,
+          repoPath: repoPath,
+          commitHash: commit.hash,
+          commitSubject: commit.subject,
+        ),
       ),
       onTap: () => showDialog<void>(
         context: context,

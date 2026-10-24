@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../application/browser_providers.dart';
+import '../../journal/presentation/journal_sheet.dart';
+import '../../review/presentation/review_sheet.dart';
 import '../../status/presentation/branches_sheet.dart';
 import '../../status/presentation/status_sheet.dart';
 import 'file_tree_widget.dart';
@@ -42,6 +44,16 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
           appBar: AppBar(
             title: Text(repo.name),
             actions: [
+              IconButton(
+                tooltip: 'مراجعة محلية',
+                icon: const Icon(Icons.compare_arrows),
+                onPressed: () => ReviewSheet.show(context, repo.path),
+              ),
+              IconButton(
+                tooltip: 'المذكرات',
+                icon: const Icon(Icons.menu_book_outlined),
+                onPressed: () => JournalSheet.show(context, repoPath: repo.path),
+              ),
               IconButton(
                 tooltip: 'الفروع',
                 icon: const Icon(Icons.account_tree_outlined),
