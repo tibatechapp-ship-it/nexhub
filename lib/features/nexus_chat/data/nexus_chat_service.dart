@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../shared/data/database.dart';
-import '../../nexus/data/nexus_presets.dart';
 import '../../nexus/data/nexus_providers_repository.dart';
 
 class NexusChatService {
