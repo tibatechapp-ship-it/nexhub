@@ -18,10 +18,6 @@ jobs:
           channel: stable
       - run: flutter pub get
       - run: flutter create --platforms=linux,windows,macos,android .
-      - name: Set CMake generator
-        if: runner.os == 'Windows'
-        run: echo "CMAKE_GENERATOR=Visual Studio 17 2022" >> $env:GITHUB_ENV
-        shell: pwsh
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
       - run: flutter analyze
@@ -50,9 +46,12 @@ jobs:
           channel: stable
       - run: flutter pub get
       - run: flutter create --platforms=linux,windows,macos,android .
-      - name: Set CMake generator
+      - name: Fix Windows CMakeLists
         if: runner.os == 'Windows'
-        run: echo "CMAKE_GENERATOR=Visual Studio 17 2022" >> $env:GITHUB_ENV
+        run: |
+          Get-Content windows/CMakeLists.txt | Select-String "Visual Studio"
+          (Get-Content windows/CMakeLists.txt) -replace 'Visual Studio 16 2019', 'Visual Studio 17 2022' | Set-Content windows/CMakeLists.txt
+          Get-Content windows/CMakeLists.txt | Select-String "Visual Studio"
         shell: pwsh
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
@@ -83,12 +82,6 @@ jobs:
           channel: stable
       - run: flutter pub get
       - run: flutter create --platforms=linux,windows,macos,android .
-      - name: Patch Windows CMake
-        if: runner.os == 'Windows'
-        run: |
-          if (Test-Path windows/CMakeLists.txt) { (Get-Content windows/CMakeLists.txt) -replace 'Visual Studio 16 2019', 'Visual Studio 17 2022' | Set-Content windows/CMakeLists.txt }
-          Get-Content windows/CMakeLists.txt | Select-Object -First 5
-        shell: pwsh
       - name: Patch Kotlin version
         run: |
           if [ -f android/settings.gradle ]; then sed -i 's/1\.7\.10/1.9.22/g' android/settings.gradle; fi
