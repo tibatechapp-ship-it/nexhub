@@ -22,13 +22,40 @@ class Settings extends Table {
   Set<Column> get primaryKey => {key};
 }
 
-@DriftDatabase(tables: [Repos, Settings])
+class Snippets extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get title => text()();
+  TextColumn get body => text()();
+  TextColumn get language => text().withDefault(const Constant('plaintext'))();
+  TextColumn get tags => text().withDefault(const Constant(''))();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class JournalEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get repoPath => text()();
+  TextColumn get commitHash => text().nullable()();
+  TextColumn get title => text()();
+  TextColumn get body => text().withDefault(const Constant(''))();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
+class RepoFeatures extends Table {
+  IntColumn get repoId => integer()();
+  TextColumn get feature => text()();
+  BoolColumn get enabled => boolean().withDefault(const Constant(false))();
+  @override
+  Set<Column> get primaryKey => {repoId, feature};
+}
+
+@DriftDatabase(tables: [Repos, Settings, Snippets, JournalEntries, RepoFeatures])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 }
 
 LazyDatabase _openConnection() {

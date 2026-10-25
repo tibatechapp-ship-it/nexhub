@@ -4,7 +4,7 @@ import '../../../shared/data/database.dart';
 import '../../workspace/application/workspace_providers.dart';
 import '../domain/file_node.dart';
 
-final currentRepoProvider = FutureProvider.family<Repo?, int>((ref, id) {
+final currentRepoProvider = FutureProvider.family<Repo?, int>((ref, id) async {
   return ref.watch(workspaceRepositoryProvider).byId(id);
 });
 
