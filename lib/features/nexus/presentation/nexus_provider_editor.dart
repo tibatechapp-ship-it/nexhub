@@ -110,7 +110,7 @@ class _NexusProviderEditorState extends ConsumerState<NexusProviderEditor> {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<String>(
-              value: _presetKey,
+              initialValue: _presetKey,
               decoration: const InputDecoration(labelText: 'النوع'),
               items: [
                 for (final p in nexusPresets)
@@ -148,7 +148,7 @@ class _NexusProviderEditorState extends ConsumerState<NexusProviderEditor> {
               )
             else
               DropdownButtonFormField<String>(
-                value: preset.models.contains(_model.text)
+                initialValue: preset.models.contains(_model.text)
                     ? _model.text
                     : preset.defaultModel,
                 decoration: const InputDecoration(labelText: 'Model'),

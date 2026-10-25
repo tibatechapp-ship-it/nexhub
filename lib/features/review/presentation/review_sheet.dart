@@ -89,7 +89,7 @@ class _ReviewSheetState extends ConsumerState<ReviewSheet> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _base,
+                          initialValue: _base,
                           decoration: const InputDecoration(
                             labelText: 'الأساس',
                             border: OutlineInputBorder(),
@@ -111,7 +111,7 @@ class _ReviewSheetState extends ConsumerState<ReviewSheet> {
                       ),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          value: _head,
+                          initialValue: _head,
                           decoration: const InputDecoration(
                             labelText: 'المقارن',
                             border: OutlineInputBorder(),
