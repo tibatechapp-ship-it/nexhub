@@ -22,7 +22,6 @@ class TerminalPage extends StatefulWidget {
 class _TerminalPageState extends State<TerminalPage> {
   final _terminal = Terminal(maxLines: 10000);
   Process? _proc;
-  final _output = StringBuffer();
 
   @override
   void initState() {
