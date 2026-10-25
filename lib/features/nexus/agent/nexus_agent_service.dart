@@ -154,6 +154,10 @@ class NexusAgentService {
         return 'قراءة ملف';
       case 'list_files':
         return 'سرد الملفات';
+      case 'apply_patch':
+        return 'تطبيق تعديل';
+      case 'create_branch':
+        return 'إنشاء فرع';
       case 'search_code':
         return 'البحث في الكود';
       default:

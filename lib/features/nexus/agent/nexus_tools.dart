@@ -185,5 +185,72 @@ List<NexusTool> buildNexusTools({
         return results.join('\n');
       },
     ),
+    NexusTool(
+      name: 'apply_patch',
+      description:
+          'Apply a code change to a file in the repository. Use this when '
+          'the user asks to fix, modify, or create a file. The new_content '
+          'replaces the entire file content.',
+      parameters: {
+        'type': 'object',
+        'properties': {
+          'file_path': {
+            'type': 'string',
+            'description': 'Relative path of the file to modify or create.',
+          },
+          'new_content': {
+            'type': 'string',
+            'description': 'The complete new content of the file.',
+          },
+          'summary': {
+            'type': 'string',
+            'description': 'Brief description of what changed and why.',
+          },
+        },
+        'required': ['file_path', 'new_content', 'summary'],
+      },
+      execute: (args) async {
+        final filePath = args['file_path'] as String;
+        final newContent = args['new_content'] as String;
+        final summary = args['summary'] as String;
+        final file = File('$repoPath/$filePath');
+        try {
+          // Ensure parent directory exists
+          final parent = file.parent;
+          if (!await parent.exists()) {
+            await parent.create(recursive: true);
+          }
+          final existed = await file.exists();
+          await file.writeAsString(newContent);
+          return '${existed ? "Updated" : "Created"} $filePath.\n'
+              'Summary: $summary\n'
+              'Lines: ${newContent.split("\n").length}';
+        } catch (e) {
+          return 'Error writing file: $e';
+        }
+      },
+    ),
+    NexusTool(
+      name: 'create_branch',
+      description:
+          'Create a new git branch and switch to it. Use this when the '
+          'user wants to start working on a new feature or fix.',
+      parameters: {
+        'type': 'object',
+        'properties': {
+          'branch_name': {
+            'type': 'string',
+            'description': 'Name for the new branch (e.g. fix/login-bug).',
+          },
+        },
+        'required': ['branch_name'],
+      },
+      execute: (args) async {
+        final name = args['branch_name'] as String;
+        final r = await git.createBranch(name);
+        if (r.ok) return 'Created and switched to branch: $name';
+        return 'Failed to create branch: ${r.stderr}';
+      },
+    ),
   ];
 }

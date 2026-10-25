@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/data/database.dart';
-import '../../git/data/git_service.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import '../../nexus/agent/nexus_agent_service.dart';
 import '../../nexus/data/nexus_providers_repository.dart';
 import '../data/nexus_chat_repository.dart';
@@ -288,10 +288,16 @@ class _MessageBubble extends StatelessWidget {
               : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: SelectableText(
-          m.content,
-          textDirection: TextDirection.rtl,
-          style: const TextStyle(fontSize: 14, height: 1.5),
+        child: MarkdownBody(
+          data: m.content,
+          selectable: true,
+          styleSheet: MarkdownStyleSheet(
+            p: const TextStyle(fontSize: 14, height: 1.5),
+            code: const TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 13,
+            ),
+          ),
         ),
       ),
     );
