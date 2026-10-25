@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../git/data/git_service.dart';
 import '../../../shared/data/database.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import '../../nexus/agent/nexus_agent_service.dart';
 import '../../nexus/data/nexus_providers_repository.dart';
 import '../data/nexus_chat_repository.dart';
+import '../../nexus/agent/nexus_agent_service.dart';
 import '../data/nexus_chat_service.dart';
 
 class NexusChatSheet extends ConsumerStatefulWidget {
-  const NexusChatSheet({super.key, this.repoPath, this.initialContext});
+  const NexusChatSheet({super.key, this.repoPath, this.initialContext, this.initialMessage});
   final String? repoPath;
   final String? initialContext;
+  final String? initialMessage;
 
   @override
   ConsumerState<NexusChatSheet> createState() => _NexusChatSheetState();
@@ -24,6 +26,17 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
   bool _streaming = false;
   String _streamBuf = '';
   String _progress = '';
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialMessage != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _controller.text = widget.initialMessage!;
+        _send();
+      });
+    }
+  }
 
   @override
   void dispose() {

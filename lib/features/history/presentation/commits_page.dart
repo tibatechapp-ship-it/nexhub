@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../git/application/git_providers.dart';
+import '../../nexus_chat/presentation/nexus_chat_sheet.dart';
 import 'history_page.dart' show DiffText;
 
 class CommitsPage extends ConsumerWidget {
@@ -33,6 +34,24 @@ class CommitsPage extends ConsumerWidget {
                 leading: const Icon(Icons.commit),
                 title: Text(c.subject.isEmpty ? '(بدون رسالة)' : c.subject),
                 subtitle: Text('${c.author} · ${c.shortHash} · ${c.date}'),
+                trailing: IconButton(
+                  icon: const Icon(Icons.psychology, color: Colors.purpleAccent),
+                  tooltip: 'شرح هذا الـ commit',
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (_) => NexusChatSheet(
+                        repoPath: repoPath,
+                        initialMessage:
+                            'Explain the changes in commit ${c.hash}. '
+                            'Focus on WHY these lines were modified using '
+                            'the get_commit_diff tool.',
+                      ),
+                    );
+                  },
+                ),
                 onTap: () => showDialog<void>(
                   context: context,
                   builder: (_) => Dialog(
