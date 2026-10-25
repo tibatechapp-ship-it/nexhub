@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_localizations.dart';
@@ -40,6 +39,7 @@ class SettingsPage extends ConsumerWidget {
             onTap: () => context.push('/nexus'),
           ),
           const Divider(),
+          const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text('حول'),
             subtitle: Text('NexHub 0.1.0'),
