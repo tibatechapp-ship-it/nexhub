@@ -22,7 +22,7 @@ class HistoryPage extends ConsumerWidget {
       body: repos.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('$e')),
-        data: (list) {
+        data: (List<Repo> list) {
           if (list.isEmpty) {
             return Center(child: Text(l.historyEmpty));
           }
@@ -94,7 +94,7 @@ class _RepoCommitsCard extends ConsumerWidget {
               padding: const EdgeInsets.all(12),
               child: Text('$e', style: TextStyle(color: scheme.error)),
             ),
-        data: (List<Repo> list) {
+            data: (List<CommitInfo> list) {
               if (list.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(16),
