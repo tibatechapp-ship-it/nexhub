@@ -90,3 +90,9 @@ class GithubIssue {
     );
   }
 }
+
+// ═══ Helpers for GithubContent ═══
+extension GithubContentHelpers on GithubContent {
+  bool get isDirectory => type == 'dir';
+  bool get isFile => type == 'file';
+}

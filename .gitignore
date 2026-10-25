@@ -24,4 +24,4 @@ Thumbs.db
 
 # Nexus local data
 *.sqlite
-*.nexb
+*.backup.*.dart

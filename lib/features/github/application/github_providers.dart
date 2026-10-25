@@ -35,3 +35,9 @@ final githubIssuesProvider = FutureProvider.family<List<GithubIssue>, ({String o
   if (api == null) throw Exception('GitHub Token is missing');
   return api.fetchIssues(params.owner, params.repo);
 });
+
+final githubContentsProvider = FutureProvider.family<List<GithubContent>, ({String owner, String repo, String path})>((ref, params) async {
+  final api = ref.watch(githubApiProvider);
+  if (api == null) throw Exception('GitHub Token is missing');
+  return api.fetchContents(params.owner, params.repo, params.path);
+});
