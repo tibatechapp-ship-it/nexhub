@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/browser/presentation/browser_page.dart';
-import '../../features/history/presentation/commits_page.dart';
+import '../../features/history/presentation/history_page.dart';
 import '../../features/nexus/presentation/nexus_settings_page.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/settings/presentation/settings_page.dart';

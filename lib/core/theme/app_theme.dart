@@ -29,7 +29,7 @@ class AppTheme {
       navigationRailTheme: const NavigationRailThemeData(
         labelType: NavigationRailLabelType.all,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
