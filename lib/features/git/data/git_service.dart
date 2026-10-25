@@ -138,6 +138,8 @@ class GitService {
     if (!r.ok || r.stdout.isEmpty) return null;
     return r.stdout.trim();
   }
+
+  Future<void> stageAll() async => _run(['add', '-A']);
 }
 
 class CommitInfo {

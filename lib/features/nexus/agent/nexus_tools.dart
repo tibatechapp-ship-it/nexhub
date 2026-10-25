@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:drift/drift.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../shared/data/database.dart';
@@ -285,7 +284,7 @@ List<NexusTool> buildNexusTools({
           // Read GitHub token from settings
           String token = '';
           try {
-            final rows = await db!.select(db!.settings).get();
+            final rows = await db.select(db.settings).get();
             for (final r in rows) {
               if (r.key == 'github_token') {
                 token = r.value;
