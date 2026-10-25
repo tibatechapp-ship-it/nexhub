@@ -25,3 +25,14 @@ Thumbs.db
 # Nexus local data
 *.sqlite
 *.backup.*.dart
+
+# APK artifacts
+apk_download/
+android-artifact.zip
+*.apk
+
+# APK artifacts
+apk_download/
+android-artifact.zip
+*.apk
+apk_new/
