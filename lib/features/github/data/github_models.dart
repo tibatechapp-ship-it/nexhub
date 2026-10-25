@@ -91,8 +91,34 @@ class GithubIssue {
   }
 }
 
-// ═══ Helpers for GithubContent ═══
-extension GithubContentHelpers on GithubContent {
+class GithubContent {
+  final String name;
+  final String path;
+  final String sha;
+  final int size;
+  final String type;
+  final String? downloadUrl;
+
+  GithubContent({
+    required this.name,
+    required this.path,
+    required this.sha,
+    required this.size,
+    required this.type,
+    this.downloadUrl,
+  });
+
+  factory GithubContent.fromJson(Map<String, dynamic> json) {
+    return GithubContent(
+      name: json['name'] ?? '',
+      path: json['path'] ?? '',
+      sha: json['sha'] ?? '',
+      size: json['size'] ?? 0,
+      type: json['type'] ?? 'file',
+      downloadUrl: json['download_url'],
+    );
+  }
+
   bool get isDirectory => type == 'dir';
   bool get isFile => type == 'file';
 }
