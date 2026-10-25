@@ -75,6 +75,11 @@ jobs:
           channel: stable
       - run: flutter pub get
       - run: flutter create --platforms=linux,windows,macos,android .
+      - name: Patch Kotlin version
+        run: |
+          if [ -f android/settings.gradle ]; then sed -i "s/kotlinVersion = .*/kotlinVersion = '1.9.22'/" android/settings.gradle; fi
+          if [ -f android/build.gradle ]; then sed -i "s/ext.kotlin_version = .*/ext.kotlin_version = '1.9.22'/" android/build.gradle; fi
+          grep -rn "kotlin" android/settings.gradle android/build.gradle 2>/dev/null || true
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
       - run: flutter build apk --release
