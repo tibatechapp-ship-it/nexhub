@@ -79,7 +79,7 @@ class HealthService {
       if (parts.length < 2) continue;
       final ts = int.tryParse(parts[1]) ?? 0;
       final days = ((now - ts) / 86400).floor();
-      if (days > 60) stale.add('${parts[0]} (${days}ي)');
+      if (days > 60) stale.add('${parts[0]} ($days ي)');
     }
 
     final suggestions = <String>[];

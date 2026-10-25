@@ -51,7 +51,7 @@ class FileViewerWidget extends StatelessWidget {
                     ),
                   ),
                   TextButton.icon(
-                    onPressed: d.kind == _Kind.text
+                    onPressed: d.kind == FileKind.text
                         ? () => ExplainSheet.show(
                               context,
                               code: d.text!.length > 6000
@@ -80,11 +80,11 @@ class FileViewerWidget extends StatelessWidget {
 
   Widget _content(BuildContext context, FileData d, AppLocalizations l) {
     switch (d.kind) {
-      case _Kind.binary:
+      case FileKind.binary:
         return Center(child: Text(l.binaryFile));
-      case _Kind.tooLarge:
+      case FileKind.tooLarge:
         return Center(child: Text(l.fileTooLarge));
-      case _Kind.text:
+      case FileKind.text:
         if (d.ext == '.md' || d.ext == '.markdown') {
           return Markdown(
             data: d.text!,
@@ -116,20 +116,20 @@ class FileViewerWidget extends StatelessWidget {
   Future<FileData> _load(File f) async {
     final stat = await f.stat();
     if (stat.size > 1024 * 1024) {
-      return const FileData(kind: _Kind.tooLarge, ext: '');
+      return const FileData(kind: FileKind.tooLarge, ext: '');
     }
     final bytes = await f.readAsBytes();
     if (bytes.take(8000).contains(0)) {
-      return const FileData(kind: _Kind.binary, ext: '');
+      return const FileData(kind: FileKind.binary, ext: '');
     }
     try {
       final text = utf8.decode(bytes);
       final name = f.path.split(RegExp(r'[/\\]')).last.toLowerCase();
       final i = name.lastIndexOf('.');
       final ext = i < 0 ? '' : name.substring(i);
-      return FileData(kind: _Kind.text, ext: ext, text: text);
+      return FileData(kind: FileKind.text, ext: ext, text: text);
     } catch (_) {
-      return const FileData(kind: _Kind.binary, ext: '');
+      return const FileData(kind: FileKind.binary, ext: '');
     }
   }
 
@@ -167,11 +167,11 @@ class FileViewerWidget extends StatelessWidget {
   }
 }
 
-enum _Kind { text, binary, tooLarge }
+enum FileKind { text, binary, tooLarge }
 
 class FileData {
   const FileData({required this.kind, required this.ext, this.text});
-  final _Kind kind;
+  final FileKind kind;
   final String ext;
   final String? text;
 }
