@@ -9,6 +9,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../ai/presentation/explain_sheet.dart';
+import '../../editor/presentation/editor_page.dart';
 
 class FileViewerWidget extends StatelessWidget {
   const FileViewerWidget({required this.file, super.key});
@@ -61,6 +62,11 @@ class FileViewerWidget extends StatelessWidget {
                         : null,
                     icon: const Icon(Icons.smart_toy_outlined, size: 18),
                     label: const Text('اشرح'),
+                  ),
+                  TextButton.icon(
+                    onPressed: () => EditorPage.open(context, f.path),
+                    icon: const Icon(Icons.edit, size: 18),
+                    label: const Text('تحرير'),
                   ),
                 ],
               ),
