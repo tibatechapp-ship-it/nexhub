@@ -13,6 +13,7 @@ import '../../status/presentation/status_sheet.dart';
 import 'file_tree_widget.dart';
 import 'file_viewer_widget.dart';
 import 'search_delegate.dart';
+import '../../nexus_chat/presentation/nexus_chat_sheet.dart';
 
 class BrowserPage extends ConsumerStatefulWidget {
   const BrowserPage({required this.workspaceId, super.key});
@@ -79,6 +80,16 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
                 tooltip: 'الحالة',
                 icon: const Icon(Icons.change_circle_outlined),
                 onPressed: () => StatusSheet.show(context, repo.path),
+              ),
+              IconButton(
+                tooltip: 'Nexus Agent',
+                icon: const Icon(Icons.auto_awesome, color: Colors.purpleAccent),
+                onPressed: () => showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (_) => NexusChatSheet(repoPath: repo.path),
+                ),
               ),
               IconButton(
                 tooltip: l.search,

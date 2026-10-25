@@ -154,6 +154,8 @@ class NexusAgentService {
         return 'قراءة ملف';
       case 'list_files':
         return 'سرد الملفات';
+      case 'search_code':
+        return 'البحث في الكود';
       default:
         return name;
     }

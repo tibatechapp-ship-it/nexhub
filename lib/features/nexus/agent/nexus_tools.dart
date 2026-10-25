@@ -136,5 +136,54 @@ List<NexusTool> buildNexusTools({
         return names.join('\n');
       },
     ),
+    NexusTool(
+      name: 'search_code',
+      description:
+          'Search for a keyword or text pattern across all files in the '
+          'repository. Returns matching file paths and line numbers. '
+          'Use this to find where a function, class, or variable is defined.',
+      parameters: {
+        'type': 'object',
+        'properties': {
+          'query': {
+            'type': 'string',
+            'description': 'The text or keyword to search for.',
+          },
+        },
+        'required': ['query'],
+      },
+      execute: (args) async {
+        final query = args['query'] as String;
+        final results = <String>[];
+        final dir = Directory(repoPath);
+        await for (final entity in dir.list(recursive: true)) {
+          if (entity is! File) continue;
+          final path = entity.path;
+          // Skip binary/generated files
+          if (path.contains('/.git/') ||
+              path.contains('/build/') ||
+              path.endsWith('.g.dart') ||
+              path.endsWith('.lock')) {
+            continue;
+          }
+          try {
+            final content = await entity.readAsString();
+            final lines = content.split('\n');
+            for (var i = 0; i < lines.length; i++) {
+              if (lines[i].contains(query)) {
+                final rel = path.replaceFirst('$repoPath/', '');
+                results.add('$rel:${i + 1}: ${lines[i].trim()}');
+                if (results.length >= 30) break;
+              }
+            }
+          } catch (_) {
+            // Skip unreadable files
+          }
+          if (results.length >= 30) break;
+        }
+        if (results.isEmpty) return 'No matches found for "$query".';
+        return results.join('\n');
+      },
+    ),
   ];
 }
