@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/data/database.dart';
-import '../data/nexus_presets.dart';
+import 'nexus_provider_editor.dart';
 import '../data/nexus_providers_repository.dart';
 
 class NexusSettingsPage extends ConsumerWidget {
