@@ -65,6 +65,8 @@ jobs:
         run: flutter build macos --release
       - name: Build other
         if: matrix.target != 'macos'
+        env:
+          CMAKE_GENERATOR: Visual Studio 17 2022
         run: flutter build ${{ matrix.target }} --release
       - uses: actions/upload-artifact@v4
         with:
@@ -86,6 +88,11 @@ jobs:
         run: |
           if [ -f android/settings.gradle ]; then sed -i 's/1\.7\.10/1.9.22/g' android/settings.gradle; fi
           cat android/settings.gradle | grep -i kotlin || true
+      - name: Patch gradle properties
+        run: |
+          echo 'android.useAndroidX=true' >> android/gradle.properties
+          echo 'android.enableJetifier=true' >> android/gradle.properties
+          cat android/gradle.properties
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
       - run: flutter build apk --release
