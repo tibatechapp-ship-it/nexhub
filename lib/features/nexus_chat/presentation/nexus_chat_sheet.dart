@@ -88,10 +88,12 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
     // Agent mode when repoPath is available
     if (widget.repoPath != null) {
       final git = GitService(widget.repoPath!);
+      final db = ref.read(appDatabaseProvider);
       final agent = NexusAgentService(
         provider: provider,
         repoPath: widget.repoPath!,
         git: git,
+        db: db,
       );
       try {
         final result = await agent.run(
@@ -224,7 +226,7 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                itemCount: 5,
+                itemCount: 6,
                 separatorBuilder: (_, __) => const SizedBox(width: 6),
                 itemBuilder: (_, i) {
                   const actions = [
@@ -233,6 +235,7 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
                     'اقترح تحسينات',
                     'لخص التغييرات',
                     'ابحث في الملفات',
+                    'تذكر هذا',
                   ];
                   return ActionChip(
                     label: Text(actions[i],

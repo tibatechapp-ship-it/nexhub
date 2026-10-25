@@ -79,10 +79,17 @@ class NexusMessages extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
+class AgentMemories extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get key => text()();
+  TextColumn get value => text()();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
+}
+
 @DriftDatabase(
   tables: [
     Repos, Settings, Snippets, JournalEntries, RepoFeatures,
-    NexusProviders, NexusConversations, NexusMessages,
+    NexusProviders, NexusConversations, NexusMessages, AgentMemories,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -90,7 +97,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -109,6 +116,9 @@ class AppDatabase extends _$AppDatabase {
           if (from < 6) {
             await m.createTable(nexusConversations);
             await m.createTable(nexusMessages);
+          }
+          if (from < 7) {
+            await m.createTable(agentMemories);
           }
         },
       );

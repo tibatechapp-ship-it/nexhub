@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:drift/drift.dart';
 
+import '../../../shared/data/database.dart';
 import '../../git/data/git_service.dart';
 
 /// Tool definitions for the Nexus Agent (OpenAI function-calling schema).
@@ -30,6 +32,7 @@ class NexusTool {
 List<NexusTool> buildNexusTools({
   required String repoPath,
   required GitService git,
+  AppDatabase? db,
 }) {
   return [
     NexusTool(
@@ -252,5 +255,73 @@ List<NexusTool> buildNexusTools({
         return 'Failed to create branch: ${r.stderr}';
       },
     ),
+    if (db != null) ...[
+      NexusTool(
+        name: 'save_to_memory',
+        description:
+            'Save a user preference or fact to long-term memory. '
+            'Use this when the user says "remember this" or expresses a '
+            'preference like "I always use Riverpod" or "my coding style is X".',
+        parameters: {
+          'type': 'object',
+          'properties': {
+            'key': {
+              'type': 'string',
+              'description': 'Short label for the memory (e.g. state_management).',
+            },
+            'value': {
+              'type': 'string',
+              'description': 'The preference or fact to remember.',
+            },
+          },
+          'required': ['key', 'value'],
+        },
+        execute: (args) async {
+          final key = args['key'] as String;
+          final value = args['value'] as String;
+          try {
+            await db.into(db.agentMemories).insert(
+                  AgentMemoriesCompanion.insert(
+                    key: key,
+                    value: value,
+                  ),
+                );
+            return 'Saved to memory: $key = $value';
+          } catch (e) {
+            return 'Error saving memory: $e';
+          }
+        },
+      ),
+      NexusTool(
+        name: 'recall_memory',
+        description:
+            'Search long-term memory for user preferences or facts. '
+            'Use this at the start of a conversation to recall what the '
+            'user prefers.',
+        parameters: {
+          'type': 'object',
+          'properties': {
+            'query': {
+              'type': 'string',
+              'description': 'Keyword to search in memory keys and values.',
+            },
+          },
+          'required': ['query'],
+        },
+        execute: (args) async {
+          final query = (args['query'] as String).toLowerCase();
+          final all = await db.select(db.agentMemories).get();
+          final matches = all
+              .where((m) =>
+                  m.key.toLowerCase().contains(query) ||
+                  m.value.toLowerCase().contains(query))
+              .toList();
+          if (matches.isEmpty) return 'No memories found for "$query".';
+          return matches
+              .map((m) => '${m.key}: ${m.value}')
+              .join('\n');
+        },
+      ),
+    ],
   ];
 }

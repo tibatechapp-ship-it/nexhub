@@ -15,13 +15,16 @@ class NexusAgentService {
     required this.provider,
     required this.repoPath,
     required this.git,
+    this.db,
   });
 
   final NexusProvider provider;
   final String repoPath;
   final GitService git;
+  final AppDatabase? db;
 
-  List<NexusTool> get _tools => buildNexusTools(repoPath: repoPath, git: git);
+  List<NexusTool> get _tools =>
+      buildNexusTools(repoPath: repoPath, git: git, db: db);
 
   /// Run the agent loop. Returns the final text response.
   /// [onProgress] is called with status messages for the UI.
@@ -35,11 +38,14 @@ class NexusAgentService {
     final tools = _tools;
     final toolMap = {for (final t in tools) t.name: t};
 
+    // Fetch memories for system prompt
+    final memories = await _loadMemories();
+
     // Build OpenAI-format messages
     final messages = <Map<String, dynamic>>[
       {
         'role': 'system',
-        'content': _systemPrompt(),
+        'content': _systemPrompt(memories),
       },
       ...history.map((m) => {'role': m.role, 'content': m.content}),
       {'role': 'user', 'content': userMessage},
@@ -136,12 +142,30 @@ class NexusAgentService {
     return jsonDecode(r.body) as Map<String, dynamic>;
   }
 
-  String _systemPrompt() {
-    return 'أنت Nexus Agent، مساعد برمجة ذكي يعمل داخل تطبيق Git. '
+  Future<List<String>> _loadMemories() async {
+    if (db == null) return [];
+    try {
+      final rows = await db!.select(db!.agentMemories).get();
+      return rows.map((r) => '${r.key}: ${r.value}').toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  String _systemPrompt(List<String> memories) {
+    final buf = StringBuffer();
+    buf.write('أنت Nexus Agent، مساعد برمجة ذكي يعمل داخل تطبيق Git. '
         'لديك أدوات للوصول إلى المستودع (commits, diffs, files). '
         'استخدم الأدوات عندما تحتاج معلومات من المستودع. '
         'أجب بالعربية. استخدم Markdown. '
-        'كن موجزاً ومفيداً.';
+        'كن موجزاً ومفيداً.');
+    if (memories.isNotEmpty) {
+      buf.write('\n\nذاكرة المستخدم (تفضيلات وحقائق محفوظة):\n');
+      for (final m in memories) {
+        buf.write('- $m\n');
+      }
+    }
+    return buf.toString();
   }
 
   String _toolLabel(String name) {
@@ -160,6 +184,10 @@ class NexusAgentService {
         return 'إنشاء فرع';
       case 'search_code':
         return 'البحث في الكود';
+      case 'save_to_memory':
+        return 'حفظ في الذاكرة';
+      case 'recall_memory':
+        return 'استرجاع من الذاكرة';
       default:
         return name;
     }
