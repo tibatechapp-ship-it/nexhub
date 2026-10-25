@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../application/browser_providers.dart';
+import '../../health/presentation/health_sheet.dart';
+import '../../stats/presentation/stats_page.dart';
 import '../../journal/presentation/journal_sheet.dart';
 import '../../review/presentation/review_sheet.dart';
 import '../../status/presentation/branches_sheet.dart';
@@ -53,6 +55,20 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
                 tooltip: 'المذكرات',
                 icon: const Icon(Icons.menu_book_outlined),
                 onPressed: () => JournalSheet.show(context, repoPath: repo.path),
+              ),
+              IconButton(
+                tooltip: 'فحص صحي',
+                icon: const Icon(Icons.health_and_safety_outlined),
+                onPressed: () => HealthSheet.show(context, repo.path),
+              ),
+              IconButton(
+                tooltip: 'إحصائياتي',
+                icon: const Icon(Icons.insights_outlined),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => StatsPage(repoPath: repo.path),
+                  ),
+                ),
               ),
               IconButton(
                 tooltip: 'الفروع',
