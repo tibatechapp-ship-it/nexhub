@@ -97,11 +97,10 @@ jobs:
           echo 'android.useAndroidX=true' >> android/gradle.properties
           echo 'android.enableJetifier=true' >> android/gradle.properties
           echo 'android.nonTransitiveRClass=true' >> android/gradle.properties
+          echo 'android.enableAapt2=false' >> android/gradle.properties
           cat android/gradle.properties
-      - name: Patch AGP version
+      - name: Show AGP version
         run: |
-          if [ -f android/settings.gradle ]; then sed -i 's/com.android.application" version "[^"]*"/com.android.application" version "8.2.0"/' android/settings.gradle; fi
-          if [ -f android/settings.gradle ]; then sed -i 's/com.android.library" version "[^"]*"/com.android.library" version "8.2.0"/' android/settings.gradle; fi
           grep -rn 'com.android' android/settings.gradle 2>/dev/null || true
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
