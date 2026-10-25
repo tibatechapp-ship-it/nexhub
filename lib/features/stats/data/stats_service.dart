@@ -99,8 +99,8 @@ class StatsService {
       'git',
       args,
       workingDirectory: repoPath,
-      stdoutEncoding: const SystemEncoding(),
-      stderrEncoding: const SystemEncoding(),
+      stdoutEncoding: systemEncoding,
+      stderrEncoding: systemEncoding,
     );
     return r.exitCode == 0 ? (r.stdout as String).trimRight() : '';
   }

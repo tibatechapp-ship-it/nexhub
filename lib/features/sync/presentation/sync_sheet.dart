@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class SyncSheet extends StatefulWidget {
@@ -23,8 +25,8 @@ class _SyncSheetState extends State<SyncSheet> {
   Future<String> _git(List<String> args) async {
     final r = await Process.run('git', args,
         workingDirectory: widget.repoPath,
-        stdoutEncoding: const SystemEncoding(),
-        stderrEncoding: const SystemEncoding());
+        stdoutEncoding: systemEncoding,
+        stderrEncoding: systemEncoding);
     return r.exitCode == 0 ? (r.stdout as String).trim() : (r.stderr as String).trim();
   }
 

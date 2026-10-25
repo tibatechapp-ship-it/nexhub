@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/l10n/app_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../git/application/git_providers.dart';
 import '../../git/data/git_service.dart';
 import '../../journal/presentation/journal_sheet.dart';
@@ -93,7 +93,7 @@ class _RepoCommitsCard extends ConsumerWidget {
               padding: const EdgeInsets.all(12),
               child: Text('$e', style: TextStyle(color: scheme.error)),
             ),
-            data: (list) {
+        data: (List<Repo> list) {
               if (list.isEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(16),
