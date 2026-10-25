@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../core/l10n/app_localizations.dart';
 import '../../ai/data/ai_settings.dart';
 
 class SettingsPage extends ConsumerWidget {

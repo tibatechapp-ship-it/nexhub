@@ -7,7 +7,7 @@ import 'package:flutter_highlight/themes/atom-one-dark.dart';
 import 'package:flutter_highlight/themes/atom-one-light.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../core/l10n/app_localizations.dart';
 import '../../ai/presentation/explain_sheet.dart';
 import '../../editor/presentation/editor_page.dart';
 
