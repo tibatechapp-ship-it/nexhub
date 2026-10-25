@@ -188,6 +188,8 @@ class NexusAgentService {
         return 'حفظ في الذاكرة';
       case 'recall_memory':
         return 'استرجاع من الذاكرة';
+      case 'create_issue':
+        return 'إنشاء Issue';
       default:
         return name;
     }

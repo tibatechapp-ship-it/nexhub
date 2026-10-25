@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../shared/data/database.dart';
 import '../../git/data/git_service.dart';
@@ -257,69 +259,105 @@ List<NexusTool> buildNexusTools({
     ),
     if (db != null) ...[
       NexusTool(
-        name: 'save_to_memory',
+        name: 'create_issue',
         description:
-            'Save a user preference or fact to long-term memory. '
-            'Use this when the user says "remember this" or expresses a '
-            'preference like "I always use Riverpod" or "my coding style is X".',
+            'Create a GitHub Issue in the repository. Use this when the '
+            'user asks to create an issue or report a bug/feature request. '
+            'Requires a GitHub token saved in settings.',
         parameters: {
           'type': 'object',
           'properties': {
-            'key': {
+            'title': {
               'type': 'string',
-              'description': 'Short label for the memory (e.g. state_management).',
+              'description': 'Issue title.',
             },
-            'value': {
+            'body': {
               'type': 'string',
-              'description': 'The preference or fact to remember.',
+              'description': 'Issue body (Markdown).',
             },
           },
-          'required': ['key', 'value'],
+          'required': ['title', 'body'],
         },
         execute: (args) async {
-          final key = args['key'] as String;
-          final value = args['value'] as String;
+          final title = args['title'] as String;
+          final body = args['body'] as String;
+
+          // Read GitHub token from settings
+          String token = '';
           try {
-            await db.into(db.agentMemories).insert(
-                  AgentMemoriesCompanion.insert(
-                    key: key,
-                    value: value,
-                  ),
-                );
-            return 'Saved to memory: $key = $value';
-          } catch (e) {
-            return 'Error saving memory: $e';
+            final rows = await db!.select(db!.settings).get();
+            for (final r in rows) {
+              if (r.key == 'github_token') {
+                token = r.value;
+                break;
+              }
+            }
+          } catch (_) {}
+
+          if (token.isEmpty) {
+            return 'Error: No GitHub token found. '
+                'Please add a GitHub token in Settings first.';
           }
-        },
-      ),
-      NexusTool(
-        name: 'recall_memory',
-        description:
-            'Search long-term memory for user preferences or facts. '
-            'Use this at the start of a conversation to recall what the '
-            'user prefers.',
-        parameters: {
-          'type': 'object',
-          'properties': {
-            'query': {
-              'type': 'string',
-              'description': 'Keyword to search in memory keys and values.',
-            },
-          },
-          'required': ['query'],
-        },
-        execute: (args) async {
-          final query = (args['query'] as String).toLowerCase();
-          final all = await db.select(db.agentMemories).get();
-          final matches = all
-              .where((m) =>
-                  m.key.toLowerCase().contains(query) ||
-                  m.value.toLowerCase().contains(query))
-              .toList();
-          if (matches.isEmpty) return 'No memories found for "$query".';
-          return matches
-              .map((m) => '${m.key}: ${m.value}')
-              .join('\n');
+
+          // Get remote URL
+          final git = GitService(repoPath);
+          final remote = await git.remoteUrl();
+          if (remote == null || remote.isEmpty) {
+            return 'Error: No remote origin found. '
+                'This repository has no GitHub remote.';
+          }
+
+          // Parse owner/repo from remote URL
+          // Supports: https://github.com/owner/repo.git or git@github.com:owner/repo.git
+          String ownerRepo = remote;
+          if (ownerRepo.endsWith('.git')) {
+            ownerRepo = ownerRepo.substring(0, ownerRepo.length - 4);
+          }
+          // Extract owner/repo
+          final uri = Uri.tryParse(ownerRepo);
+          String? owner;
+          String? repo;
+          if (uri != null && uri.pathSegments.length >= 2) {
+            owner = uri.pathSegments[uri.pathSegments.length - 2];
+            repo = uri.pathSegments[uri.pathSegments.length - 1];
+          } else {
+            // SSH format: git@github.com:owner/repo
+            final match = RegExp(r'[:/]([^/]+)/([^/]+)$')
+                .firstMatch(ownerRepo);
+            if (match != null) {
+              owner = match.group(1);
+              repo = match.group(2);
+            }
+          }
+
+          if (owner == null || repo == null) {
+            return 'Error: Could not parse owner/repo from remote: $remote';
+          }
+
+          // Call GitHub API
+          try {
+            final uri = Uri.parse(
+                'https://api.github.com/repos/$owner/$repo/issues');
+            final r = await http.post(
+              uri,
+              headers: {
+                'Authorization': 'Bearer $token',
+                'Accept': 'application/vnd.github+json',
+                'X-GitHub-Api-Version': '2022-11-28',
+              },
+              body: jsonEncode({'title': title, 'body': body}),
+            );
+            if (r.statusCode >= 200 && r.statusCode < 300) {
+              final data = jsonDecode(r.body) as Map<String, dynamic>;
+              final url = data['html_url'] as String? ?? '';
+              final number = data['number'] as int? ?? 0;
+              return 'Issue #$number created successfully.\nURL: $url';
+            } else {
+              return 'GitHub API error ${r.statusCode}: ${r.body}';
+            }
+          } catch (e) {
+            return 'Error creating issue: $e';
+          }
         },
       ),
     ],

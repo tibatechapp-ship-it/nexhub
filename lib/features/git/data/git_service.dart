@@ -133,7 +133,11 @@ class GitService {
     return r.stdout.split('\n').where((l) => l.isNotEmpty).toList();
   }
 
-  Future<void> stageAll() async => _run(['add', '-A']);
+  Future<String?> remoteUrl() async {
+    final r = await _run(['remote', 'get-url', 'origin']);
+    if (!r.ok || r.stdout.isEmpty) return null;
+    return r.stdout.trim();
+  }
 }
 
 class CommitInfo {
