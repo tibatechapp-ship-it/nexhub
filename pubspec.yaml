@@ -23,6 +23,8 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_markdown: ^0.7.3
   flutter_highlight: ^0.7.0
+  code_forge: ^4.3.0
+  re_highlight: ^0.0.3
   highlight: ^0.7.0
 
   file_picker: ^8.1.2

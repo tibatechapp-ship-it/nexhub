@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../ai/data/ai_settings.dart';
@@ -30,8 +30,14 @@ class SettingsPage extends ConsumerWidget {
             trailing: const Icon(Icons.chevron_left),
             onTap: () => _editAi(context, ref, ai),
           ),
+          ListTile(
+            leading: const Icon(Icons.auto_awesome),
+            title: const Text('Nexus AI (مزودات)'),
+            subtitle: const Text('DeepSeek, Qwen, MiniMax, Z.ai, مخصص'),
+            trailing: const Icon(Icons.chevron_left),
+            onTap: () => context.push('/nexus'),
+          ),
           const Divider(),
-          const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text('حول'),
             subtitle: Text('NexHub 0.1.0'),

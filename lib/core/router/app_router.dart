@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/browser/presentation/browser_page.dart';
 import '../../features/history/presentation/commits_page.dart';
-import '../../features/history/presentation/history_page.dart';
+import '../../features/nexus/presentation/nexus_settings_page.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/settings/presentation/settings_page.dart';
 import '../../features/snippets/presentation/snippets_page.dart';
@@ -37,6 +37,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(path: '/history', builder: (_, __) => const HistoryPage()),
           GoRoute(path: '/snippets', builder: (_, __) => const SnippetsPage()),
           GoRoute(path: '/settings', builder: (_, __) => const SettingsPage()),
+          GoRoute(path: '/nexus', builder: (_, __) => const NexusSettingsPage()),
         ],
       ),
     ],
