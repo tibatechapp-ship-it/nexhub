@@ -23,5 +23,7 @@
   "searching": "Searching...",
   "removeWorkspace": "Remove from list",
   "historyEmpty": "No history yet",
-  "snippetsEmpty": "No snippets yet"
+  "snippetsEmpty": "No snippets yet",
+  "binaryFile": "Binary file",
+  "fileTooLarge": "File too large"
 }

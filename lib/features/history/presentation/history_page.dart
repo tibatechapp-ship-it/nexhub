@@ -6,6 +6,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../git/application/git_providers.dart';
 import '../../git/data/git_service.dart';
 import '../../journal/presentation/journal_sheet.dart';
+import '../../../shared/data/database.dart';
 import '../../workspace/application/workspace_providers.dart';
 
 class HistoryPage extends ConsumerWidget {

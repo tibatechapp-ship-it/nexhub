@@ -23,5 +23,7 @@
   "searching": "جارٍ البحث...",
   "removeWorkspace": "إزالة من القائمة",
   "historyEmpty": "لا يوجد سجل بعد",
-  "snippetsEmpty": "لا توجد مقتطفات بعد"
+  "snippetsEmpty": "لا توجد مقتطفات بعد",
+  "binaryFile": "ملف ثنائي",
+  "fileTooLarge": "الملف كبير جداً"
 }
