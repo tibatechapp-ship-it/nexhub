@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/data/database.dart';
+import '../../git/data/git_service.dart';
+import '../../nexus/agent/nexus_agent_service.dart';
+import '../../nexus/data/nexus_providers_repository.dart';
 import '../data/nexus_chat_repository.dart';
 import '../data/nexus_chat_service.dart';
 
@@ -20,6 +23,7 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
   int? _convId;
   bool _streaming = false;
   String _streamBuf = '';
+  String _progress = '';
 
   @override
   void dispose() {
@@ -48,10 +52,11 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
     _controller.clear();
     _streaming = true;
     _streamBuf = '';
+    _progress = '';
     setState(() {});
 
-    final service = ref.read(nexusChatServiceProvider);
-    if (service == null) {
+    final provider = ref.read(nexusDefaultProvider).valueOrNull;
+    if (provider == null || !provider.enabled) {
       await repo.addMessage(
         convId: _convId!,
         role: 'assistant',
@@ -67,24 +72,47 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
         .map((m) => (role: m.role, content: m.content))
         .toList();
 
-    String systemPrompt = service.defaultSystemPrompt();
-    if (widget.initialContext != null) {
-      systemPrompt +=
-          '\n\nالسياق (ملف ${widget.initialContext}): '
-          'أجب بمراعاة هذا الملف.';
-    }
-
-    try {
-      await for (final chunk in service.streamReply(
-        history: history,
-        systemPrompt: systemPrompt,
-      )) {
-        _streamBuf += chunk;
-        if (mounted) setState(() {});
-        _scrollToBottom();
+    // Agent mode when repoPath is available
+    if (widget.repoPath != null) {
+      final git = GitService(widget.repoPath!);
+      final agent = NexusAgentService(
+        provider: provider,
+        repoPath: widget.repoPath!,
+        git: git,
+      );
+      try {
+        final result = await agent.run(
+          userMessage: text,
+          history: history,
+          onProgress: (status) {
+            if (mounted) setState(() => _progress = status);
+          },
+        );
+        _streamBuf = result;
+      } catch (e) {
+        _streamBuf = '⚠️ خطأ: $e';
       }
-    } catch (e) {
-      _streamBuf += '\n\n⚠️ خطأ: $e';
+    } else {
+      // Chat mode: simple streaming
+      final service = NexusChatService(provider);
+      String systemPrompt = service.defaultSystemPrompt();
+      if (widget.initialContext != null) {
+        systemPrompt +=
+            '\n\nالسياق (ملف ${widget.initialContext}): '
+            'أجب بمراعاة هذا الملف.';
+      }
+      try {
+        await for (final chunk in service.streamReply(
+          history: history,
+          systemPrompt: systemPrompt,
+        )) {
+          _streamBuf += chunk;
+          if (mounted) setState(() {});
+          _scrollToBottom();
+        }
+      } catch (e) {
+        _streamBuf += '\n\n⚠️ خطأ: $e';
+      }
     }
 
     if (_streamBuf.isNotEmpty) {
@@ -95,7 +123,7 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
       );
     }
     _streaming = false;
-    _streamBuf = '';
+    _progress = '';
     if (mounted) setState(() {});
   }
 
@@ -122,13 +150,26 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
         height: MediaQuery.of(context).size.height * 0.92,
         child: Column(
           children: [
-            _Header(
-              title: 'Nexus Chat',
-              onNew: () async {
-                final repo = ref.read(nexusChatRepositoryProvider);
-                _convId = await repo.newConversation(repoPath: widget.repoPath);
-                setState(() {});
-              },
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
+              child: Row(
+                children: [
+                  const Text('Nexus Agent',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.add_comment_outlined),
+                    tooltip: 'محادثة جديدة',
+                    onPressed: () async {
+                      final repo = ref.read(nexusChatRepositoryProvider);
+                      _convId = await repo.newConversation(
+                          repoPath: widget.repoPath);
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: ListView(
@@ -136,6 +177,21 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
                 padding: const EdgeInsets.all(12),
                 children: [
                   for (final m in msgs) _MessageBubble(m: m),
+                  if (_streaming && _progress.isNotEmpty && _streamBuf.isEmpty)
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(_progress),
+                        ],
+                      ),
+                    ),
                   if (_streaming && _streamBuf.isNotEmpty)
                     _MessageBubble(
                       m: NexusMessage(
@@ -147,28 +203,35 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
                       ),
                       isStreaming: true,
                     ),
-                  if (_streaming && _streamBuf.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.all(12),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                          SizedBox(width: 8),
-                          Text('يفكر...'),
-                        ],
-                      ),
-                    ),
                 ],
               ),
             ),
-            _QuickActions(onTap: (q) {
-              _controller.text = q;
-              _send();
-            }),
+            SizedBox(
+              height: 36,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                itemCount: 5,
+                separatorBuilder: (_, __) => const SizedBox(width: 6),
+                itemBuilder: (_, i) {
+                  const actions = [
+                    'اشرح آخر Commit',
+                    'راجع الكود',
+                    'اقترح تحسينات',
+                    'لخص التغييرات',
+                    'ابحث في الملفات',
+                  ];
+                  return ActionChip(
+                    label: Text(actions[i],
+                        style: const TextStyle(fontSize: 12)),
+                    onPressed: () {
+                      _controller.text = actions[i];
+                      _send();
+                    },
+                  );
+                },
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
               child: Row(
@@ -180,7 +243,7 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
                       maxLines: 4,
                       textDirection: TextDirection.rtl,
                       decoration: const InputDecoration(
-                        hintText: 'اسأل Nexus...',
+                        hintText: 'اسأل Nexus Agent...',
                         border: OutlineInputBorder(),
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -198,32 +261,6 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _Header extends StatelessWidget {
-  const _Header({required this.title, required this.onNew});
-  final String title;
-  final VoidCallback onNew;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
-      child: Row(
-        children: [
-          Text(title,
-              style:
-                  const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.add_comment_outlined),
-            tooltip: 'محادثة جديدة',
-            onPressed: onNew,
-          ),
-        ],
       ),
     );
   }
@@ -255,35 +292,6 @@ class _MessageBubble extends StatelessWidget {
           m.content,
           textDirection: TextDirection.rtl,
           style: const TextStyle(fontSize: 14, height: 1.5),
-        ),
-      ),
-    );
-  }
-}
-
-class _QuickActions extends StatelessWidget {
-  const _QuickActions({required this.onTap});
-  final ValueChanged<String> onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    const actions = [
-      'شرح هذا الكود',
-      'اكتب اختبارات',
-      'اقترح تحسينات',
-      'اشرح آخر commit',
-      'أصلح الخطأ',
-    ];
-    return SizedBox(
-      height: 36,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        itemCount: actions.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 6),
-        itemBuilder: (_, i) => ActionChip(
-          label: Text(actions[i], style: const TextStyle(fontSize: 12)),
-          onPressed: () => onTap(actions[i]),
         ),
       ),
     );
