@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../shared/data/database.dart';
 import '../../git/data/git_service.dart';
-import '../data/nexus_providers_repository.dart';
 import 'nexus_tools.dart';
 
 /// Callback for agent progress updates (tool calls, thinking, etc.)

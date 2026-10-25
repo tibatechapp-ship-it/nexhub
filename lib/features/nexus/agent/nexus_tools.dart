@@ -1,8 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../shared/data/database.dart';
 import '../../git/data/git_service.dart';
 
 /// Tool definitions for the Nexus Agent (OpenAI function-calling schema).
