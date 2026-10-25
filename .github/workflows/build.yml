@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.27.0'
           channel: stable
       - run: flutter pub get
       - run: flutter create --platforms=linux,windows,macos,android .
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.27.0'
           channel: stable
       - run: flutter pub get
       - run: flutter create --platforms=linux,windows,macos,android .
@@ -84,7 +84,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.24.0'
+          flutter-version: '3.27.0'
           channel: stable
       - run: flutter pub get
       - run: flutter create --platforms=linux,windows,macos,android .
@@ -97,7 +97,6 @@ jobs:
           echo 'android.useAndroidX=true' >> android/gradle.properties
           echo 'android.enableJetifier=true' >> android/gradle.properties
           echo 'android.nonTransitiveRClass=true' >> android/gradle.properties
-          echo 'android.enableAapt2=false' >> android/gradle.properties
           cat android/gradle.properties
       - name: Show AGP version
         run: |
