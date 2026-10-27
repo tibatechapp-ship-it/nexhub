@@ -1,45 +1,55 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 
 import 'package:nexhub/features/github/data/github_settings.dart';
 
-@GenerateMocks([FlutterSecureStorage])
-import 'secure_storage_test.mocks.dart';
+/// In-memory fake of TokenStorage for hermetic tests.
+class _FakeTokenStorage implements TokenStorage {
+  final Map<String, String> _store = {};
+
+  @override
+  Future<void> write({required String key, required String? value}) async {
+    if (value == null) {
+      _store.remove(key);
+    } else {
+      _store[key] = value;
+    }
+  }
+
+  @override
+  Future<String?> read({required String key}) async => _store[key];
+
+  @override
+  Future<void> delete({required String key}) async => _store.remove(key);
+}
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('N2: GitHub token stored in secure storage', () {
-    test('saveToken writes to secure storage', () async {
-      final mock = MockFlutterSecureStorage();
-      when(mock.write(key: 'github_token', value: 'secret123'))
-          .thenAnswer((_) async {});
-
-      final settings = GithubSettings(storage: mock);
+    test('saveToken writes to storage', () async {
+      final fake = _FakeTokenStorage();
+      final settings = GithubSettings(storage: fake);
       await settings.saveToken('secret123');
-
-      verify(mock.write(key: 'github_token', value: 'secret123')).called(1);
+      expect(await fake.read(key: 'github_token'), equals('secret123'));
     });
 
-    test('getToken reads from secure storage', () async {
-      final mock = MockFlutterSecureStorage();
-      when(mock.read(key: 'github_token'))
-          .thenAnswer((_) async => 'secret123');
-
-      final settings = GithubSettings(storage: mock);
+    test('getToken reads from storage', () async {
+      final fake = _FakeTokenStorage();
+      await fake.write(key: 'github_token', value: 'secret123');
+      final settings = GithubSettings(storage: fake);
       expect(await settings.getToken(), equals('secret123'));
     });
 
-    test('removeToken deletes from secure storage', () async {
-      final mock = MockFlutterSecureStorage();
-      when(mock.delete(key: 'github_token')).thenAnswer((_) async {});
-
-      final settings = GithubSettings(storage: mock);
+    test('removeToken deletes from storage', () async {
+      final fake = _FakeTokenStorage();
+      await fake.write(key: 'github_token', value: 'secret123');
+      final settings = GithubSettings(storage: fake);
       await settings.removeToken();
+      expect(await fake.read(key: 'github_token'), isNull);
+    });
 
-      verify(mock.delete(key: 'github_token')).called(1);
+    test('getToken returns null when no token stored', () async {
+      final fake = _FakeTokenStorage();
+      final settings = GithubSettings(storage: fake);
+      expect(await settings.getToken(), isNull);
     });
   });
 }
