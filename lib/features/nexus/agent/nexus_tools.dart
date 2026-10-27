@@ -6,6 +6,18 @@ import 'package:http/http.dart' as http;
 import '../../../shared/data/database.dart';
 import '../../git/data/git_service.dart';
 
+
+/// Resolve [relative] against [repoPath] and ensure the result stays inside
+/// the repository. Returns null if the path escapes the repo root.
+String? _safePath(String repoPath, String relative) {
+  final root = Directory(repoPath).absolute.path;
+  final resolved = File('$root/$relative').absolute.path;
+  if (resolved != root && !resolved.startsWith('$root/')) {
+    return null;
+  }
+  return resolved;
+}
+
 /// Tool definitions for the Nexus Agent (OpenAI function-calling schema).
 class NexusTool {
   const NexusTool({
@@ -103,7 +115,9 @@ List<NexusTool> buildNexusTools({
       },
       execute: (args) async {
         final path = args['file_path'] as String;
-        final file = File('$repoPath/$path');
+        final resolved = _safePath(repoPath, path);
+        if (resolved == null) return 'Access denied: path escapes repository.';
+        final file = File(resolved);
         if (!await file.exists()) return 'File not found: $path';
         final content = await file.readAsString();
         if (content.length > 8000) {
@@ -129,7 +143,9 @@ List<NexusTool> buildNexusTools({
       },
       execute: (args) async {
         final dir = (args['dir_path'] as String?) ?? '';
-        final directory = Directory('$repoPath/$dir');
+        final resolved = _safePath(repoPath, dir);
+        if (resolved == null) return 'Access denied: path escapes repository.';
+        final directory = Directory(resolved);
         if (!await directory.exists()) return 'Directory not found.';
         final entries = await directory.list().toList();
         final names = entries
@@ -217,7 +233,9 @@ List<NexusTool> buildNexusTools({
         final filePath = args['file_path'] as String;
         final newContent = args['new_content'] as String;
         final summary = args['summary'] as String;
-        final file = File('$repoPath/$filePath');
+        final resolved = _safePath(repoPath, filePath);
+        if (resolved == null) return 'Access denied: path escapes repository.';
+        final file = File(resolved);
         try {
           // Ensure parent directory exists
           final parent = file.parent;
