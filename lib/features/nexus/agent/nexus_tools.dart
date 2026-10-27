@@ -10,8 +10,16 @@ import '../../git/data/git_service.dart';
 /// Resolve [relative] against [repoPath] and ensure the result stays inside
 /// the repository. Returns null if the path escapes the repo root.
 String? safePath(String repoPath, String relative) {
+  // Reject absolute paths and empty/traversal attempts up front.
+  if (relative.isEmpty) return null;
+  if (relative.startsWith('/') || relative.startsWith('\\')) return null;
+  // Normalize separators and reject any '..' segment.
+  final normalized = relative.replaceAll('\\', '/');
+  for (final seg in normalized.split('/')) {
+    if (seg == '..' || seg == '.') return null;
+  }
   final root = Directory(repoPath).absolute.path;
-  final resolved = File('$root/$relative').absolute.path;
+  final resolved = File('$root/$normalized').absolute.path;
   if (resolved != root && !resolved.startsWith('$root/')) {
     return null;
   }

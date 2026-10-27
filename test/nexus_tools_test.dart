@@ -38,10 +38,8 @@ void main() {
       expect(safePath(repoPath, '..\\..\\etc\\passwd'), isNull);
     });
 
-    test('rejects empty path resolves to repo root (not traversal)', () {
-      // Empty path resolves to repo root itself — safePath returns root, not null.
-      // The traversal guard only blocks ESCAPE, not root access.
-      expect(safePath(repoPath, ''), isNotNull);
+    test('rejects empty path', () {
+      expect(safePath(repoPath, ''), isNull);
     });
 
     test('allows in-repo file', () {
