@@ -74,6 +74,22 @@ void main() {
     });
   });
 
+  group('N1: path traversal rejection (list_files tool)', () {
+    test('list_files rejects ../ traversal', () async {
+      final tools = buildNexusTools(repoPath: repoPath, git: GitService(repoPath));
+      final listTool = tools.firstWhere((t) => t.name == 'list_files');
+      final result = await listTool.execute({'dir_path': '../'});
+      expect(result, contains('Access denied'));
+    });
+
+    test('list_files allows in-repo directory', () async {
+      final tools = buildNexusTools(repoPath: repoPath, git: GitService(repoPath));
+      final listTool = tools.firstWhere((t) => t.name == 'list_files');
+      final result = await listTool.execute({'dir_path': 'sub'});
+      expect(result, contains('nested.txt'));
+    });
+  });
+
   group('N1: path traversal rejection (apply_patch tool)', () {
     test('apply_patch rejects ../ traversal', () async {
       final tools = buildNexusTools(repoPath: repoPath, git: GitService(repoPath));
