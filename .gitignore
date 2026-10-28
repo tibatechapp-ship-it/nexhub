@@ -36,3 +36,6 @@ apk_download/
 android-artifact.zip
 *.apk
 apk_new/
+
+# build artifacts (moved out of the repo 2026-10-29)
+apk_split.zip
