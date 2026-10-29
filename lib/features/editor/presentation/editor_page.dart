@@ -139,8 +139,8 @@ class _EditorPageState extends State<EditorPage> {
           title: Text(name),
           actions: [
             if (_dirty)
-              const Padding(
-                padding: EdgeInsets.only(left: 8),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
                 child: Icon(Icons.circle,
                     size: 8, color: Theme.of(context).colorScheme.tertiary),
               ),

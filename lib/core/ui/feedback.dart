@@ -49,7 +49,7 @@ void showAppSnackBar(
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      behavior: SnackBar.floating,
+      behavior: SnackBarBehavior.floating,
       content: Text(message),
       action: (actionLabel != null && onAction != null)
           ? SnackBarAction(label: actionLabel, onPressed: onAction)

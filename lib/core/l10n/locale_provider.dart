@@ -27,7 +27,7 @@ class LocaleNotifier extends StateNotifier<LocaleState> {
   Future<void> _load() async {
     final sp = await SharedPreferences.getInstance();
     final saved = sp.getString(_prefKey);
-    if (saved == 'ar' || saved == 'en' || saved == 'system') {
+    if (saved != null && (saved == 'ar' || saved == 'en' || saved == 'system')) {
       state = LocaleState(saved);
     }
   }
