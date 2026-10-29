@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../core/ui/feedback.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/journal_repository.dart';
@@ -167,10 +169,22 @@ class _JournalSheetState extends ConsumerState<JournalSheet> {
                           title: Text(e.title),
                           subtitle: e.body.isEmpty ? null : Text(e.body),
                           trailing: IconButton(
+                            tooltip: 'حذف الملاحظة',
                             icon: const Icon(Icons.delete_outline),
-                            onPressed: () => ref
-                                .read(journalRepositoryProvider)
-                                .remove(e.id),
+                            onPressed: () async {
+                              // UX audit: deletion now confirms first.
+                              final ok = await confirmAction(
+                                context,
+                                title: 'حذف الملاحظة',
+                                message: 'سيتم حذف "${e.title}" نهائياً.',
+                                confirmLabel: 'حذف',
+                              );
+                              if (ok) {
+                                await ref
+                                    .read(journalRepositoryProvider)
+                                    .remove(e.id);
+                              }
+                            },
                           ),
                         ),
                       );

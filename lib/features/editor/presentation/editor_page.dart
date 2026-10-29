@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 
@@ -111,7 +112,22 @@ class _EditorPageState extends State<EditorPage> {
   Widget build(BuildContext context) {
     final name = widget.filePath.split(RegExp(r'[/\\]')).last;
 
-    return PopScope(
+    // UX audit: the app targets desktops yet had zero keyboard shortcuts.
+    return Shortcuts(
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.keyS, control: true): _SaveIntent(),
+        SingleActivator(LogicalKeyboardKey.keyS, meta: true): _SaveIntent(),
+      },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          _SaveIntent: CallbackAction<_SaveIntent>(
+            onInvoke: (_) {
+              if (!_saving && !_loading) _save();
+              return null;
+            },
+          ),
+        },
+        child: PopScope(
       canPop: !_dirty,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
@@ -125,7 +141,8 @@ class _EditorPageState extends State<EditorPage> {
             if (_dirty)
               const Padding(
                 padding: EdgeInsets.only(left: 8),
-                child: Icon(Icons.circle, size: 8, color: Colors.orange),
+                child: Icon(Icons.circle,
+                    size: 8, color: Theme.of(context).colorScheme.tertiary),
               ),
             IconButton(
               tooltip: 'حفظ',
@@ -165,6 +182,12 @@ class _EditorPageState extends State<EditorPage> {
                     ),
                   ),
       ),
+      ),
+      ),
     );
   }
+}
+
+class _SaveIntent extends Intent {
+  const _SaveIntent();
 }

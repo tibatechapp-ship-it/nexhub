@@ -270,6 +270,7 @@ class _NexusChatSheetState extends ConsumerState<NexusChatSheet> {
                   ),
                   const SizedBox(width: 8),
                   IconButton.filled(
+                    tooltip: 'إرسال',
                     onPressed: _streaming ? null : _send,
                     icon: const Icon(Icons.send),
                   ),

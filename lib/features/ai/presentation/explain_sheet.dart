@@ -93,6 +93,7 @@ class _ExplainSheetState extends ConsumerState<ExplainSheet> {
                   ),
                   if (_result != null)
                     IconButton(
+                      tooltip: 'نسخ النتيجة',
                       icon: const Icon(Icons.copy),
                       onPressed: () {
                         Clipboard.setData(ClipboardData(text: _result!));
@@ -102,6 +103,7 @@ class _ExplainSheetState extends ConsumerState<ExplainSheet> {
                       },
                     ),
                   IconButton(
+                    tooltip: 'إعادة التوليد',
                     icon: const Icon(Icons.refresh),
                     onPressed: _loading ? null : _run,
                   ),

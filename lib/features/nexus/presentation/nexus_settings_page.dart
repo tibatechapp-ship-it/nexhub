@@ -25,7 +25,8 @@ class NexusSettingsPage extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (p.isDefault)
-                      const Icon(Icons.star, size: 18, color: Colors.amber),
+                      Icon(Icons.star,
+                          size: 18, color: Theme.of(context).colorScheme.tertiary),
                     Switch(
                       value: p.enabled,
                       onChanged: (v) async {

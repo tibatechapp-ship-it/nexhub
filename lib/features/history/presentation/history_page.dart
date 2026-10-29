@@ -200,6 +200,7 @@ class _DiffDialog extends ConsumerWidget {
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
+                  tooltip: 'إغلاق',
                   icon: const Icon(Icons.close),
                   onPressed: () => Navigator.pop(context),
                 ),
