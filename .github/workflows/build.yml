@@ -78,7 +78,7 @@ jobs:
         env:
           CMAKE_GENERATOR: Visual Studio 17 2022
         run: flutter build ${{ matrix.target }} --release
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: nexhub-${{ matrix.artifact }}
           path: build/${{ matrix.target }}/**/*
@@ -112,7 +112,7 @@ jobs:
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
       - run: flutter build apk --debug --split-per-abi
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: nexhub-android
           path: build/app/outputs/flutter-apk/*.apk
