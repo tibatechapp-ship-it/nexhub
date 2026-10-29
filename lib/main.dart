@@ -6,6 +6,7 @@ import 'core/l10n/app_localizations.dart';
 import 'core/l10n/locale_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,9 @@ class NexHubApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      // الوضع الليلي: الاختيار (light/dark/system) محفوظ في SharedPreferences
+      // ويُقرأ عبر appThemeModeProvider (core/theme/theme_provider.dart).
+      themeMode: ref.watch(appThemeModeProvider).mode,
       routerConfig: router,
       localizationsDelegates: const [
         AppLocalizations.delegate,

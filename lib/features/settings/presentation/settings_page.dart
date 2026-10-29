@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_localizations.dart';
 import '../../../core/l10n/locale_provider.dart';
+import '../../../core/theme/theme_provider.dart';
 import '../../ai/data/ai_settings.dart';
 
 /// أيقونة سهم متوافقة مع الاتجاه الحالي — بدل chevron_left الثابت
@@ -58,6 +59,14 @@ class SettingsPage extends ConsumerWidget {
             trailing: directionAwareChevron(context),
             onTap: () => _pickLanguage(context, ref),
           ),
+          // الوضع الليلي — اختيار فاتح/داكن/حسب النظام محفوظ في SharedPreferences
+          ListTile(
+            leading: const Icon(Icons.brightness_6_outlined),
+            title: const Text('المظهر'),
+            subtitle: Text(_themeLabel(ref.read(appThemeModeProvider).code)),
+            trailing: directionAwareChevron(context),
+            onTap: () => _pickTheme(context, ref),
+          ),
           const Divider(),
           const ListTile(
             leading: Icon(Icons.info_outline),
@@ -111,6 +120,53 @@ class SettingsPage extends ConsumerWidget {
     );
     if (chosen == null || chosen == current) return;
     await ref.read(appLocaleProvider.notifier).setLocale(chosen);
+  }
+
+  /// مبدّل مظهر (وضع ليلي) يحفظ الاختيار عبر appThemeModeProvider —
+  /// بنفس نمط مبدّل اللغة أعلاه (RadioGroup + SimpleDialog).
+  Future<void> _pickTheme(BuildContext context, WidgetRef ref) async {
+    final current = ref.read(appThemeModeProvider).code;
+    final chosen = await showDialog<String>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: const Text('المظهر'),
+        children: [
+          RadioGroup<String>(
+            groupValue: current,
+            onChanged: (v) => Navigator.pop(ctx, v),
+            child: Column(
+              children: const [
+                RadioListTile<String>(
+                  value: 'light',
+                  title: Text('فاتح'),
+                ),
+                RadioListTile<String>(
+                  value: 'dark',
+                  title: Text('داكن (وضع ليلي)'),
+                ),
+                RadioListTile<String>(
+                  value: 'system',
+                  title: Text('حسب النظام'),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+    if (chosen == null || chosen == current) return;
+    await ref.read(appThemeModeProvider.notifier).setMode(chosen);
+  }
+
+  static String _themeLabel(String code) {
+    switch (code) {
+      case 'light':
+        return 'فاتح';
+      case 'dark':
+        return 'داكن';
+      default:
+        return 'حسب النظام';
+    }
   }
 
   Future<void> _editAi(
