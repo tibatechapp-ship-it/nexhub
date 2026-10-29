@@ -22,7 +22,7 @@ class _AddWorkspaceDialogState extends State<AddWorkspaceDialog> {
   }
 
   Future<void> _pickParent() async {
-    final path = await FilePicker.platform.getDirectoryPath();
+    final path = await FilePicker.getDirectoryPath();
     if (path != null) setState(() => _parent = path);
   }
 
@@ -43,7 +43,7 @@ class _AddWorkspaceDialogState extends State<AddWorkspaceDialog> {
           ),
           FilledButton(
             onPressed: () async {
-              final path = await FilePicker.platform.getDirectoryPath();
+              final path = await FilePicker.getDirectoryPath();
               if (path != null && context.mounted) {
                 Navigator.pop(context, path);
               }
