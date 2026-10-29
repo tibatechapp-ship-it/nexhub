@@ -1,7 +1,22 @@
+<p align="center">
+  <img src=".github/assets/banner.svg" alt="NexHub — منصة Git محلية عربية" width="100%">
+</p>
+
 # NexHub
 
 منصة Git محلية عربية للمطورين — بديل لـ GitHub/GitLab/Gitea
 يعمل على جهازك، بدون حساب، بدون سحابة، RTL أصلي.
+
+<p align="center">
+  <a href="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/ci.yml"><img src="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/build.yml"><img src="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/build.yml/badge.svg" alt="Build"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+  <a href="https://github.com/tibatechapp-ship-it/nexhub/releases"><img src="https://img.shields.io/github/v/release/tibatechapp-ship-it/nexhub" alt="Release"></a>
+  <img src="https://img.shields.io/badge/Flutter-%E2%89%A53.24-02569B?logo=flutter&logoColor=white" alt="Flutter ≥3.24">
+  <img src="https://img.shields.io/badge/Offline-100%25-success" alt="Offline 100%">
+</p>
+
+---
 
 ## المميزات (P0+P1+P2+P3+P4+P5+P6)
 
@@ -20,6 +35,9 @@
 - صحة المستودع + إحصائيات + دروس
 - ميزات لكل مستودع (features per repo) — تفعيل/تعطيل
 - Terminal مدمج + CI + إشعارات + فريق + hooks
+- 🌐 مبدّل لغة (عربي/إنجليزي/النظام) محفوظ في التفضيلات
+- ⚔️ مُفسّر تعارضات دمج يُفتح تلقائياً عند الفشل
+- ♿ tooltips لكل أزرار الأيقونات + تأكيدات إتلاف + حفظ بـCtrl+S
 
 ## Nexus Agent
 
@@ -53,9 +71,35 @@ flutter gen-l10n
 flutter run -d windows    # أو linux / android / ios
 ```
 
+## التطوير والاختبار
+
+```bash
+flutter analyze           # صفر ملاحظات — بوابة الـCI
+flutter test              # اختبارات الخدمات (git_service، nexus_tools، ...)
+```
+
+> ملاحظة: بعد أي تعديل على ملفات ARB أعِد `flutter gen-l10n` قبل التشغيل
+> (ملف التوليد مُتجاهل في .gitignore ولا يُرفع).
+
+## لقطات
+
+| الواجهة | الميزة المعروضة |
+|---|---|
+| ![NexHub banner](.github/assets/banner.svg) | منصة Git عربية محلية بوكيل AI مدمج |
+
+<!-- 💡 لقطات حقيقية: أضف PNG من التطبيق الحي في .github/assets/ وأدرجها هنا -->
+
 ## الخصوصية
 
 لا يجمع NexHub أي بيانات. مستودعاتك تبقى على جهازك.
+
+## المساهمة
+
+نرحب بمساهماتك! اقرأ [CONTRIBUTING.md](CONTRIBUTING.md) (بيئة التطوير، بوابات الجودة، سير العمل)، و[SECURITY.md](SECURITY.md) للإبلاغ الأمني. الـIssues والـPRs لهما قوالب جاهزة تسهّل الأمر.
+
+## سجل التغييرات
+
+اطّلع على [CHANGELOG.md](CHANGELOG.md) لمعرفة ما الجديد في كل إصدار.
 
 ## الترخيص
 
