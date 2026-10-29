@@ -23,5 +23,5 @@ jobs:
       - name: Test
         run: if [ -f package.json ]; then npm test --if-present; else echo "skip"; fi
       - name: Secrets
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         continue-on-error: true
