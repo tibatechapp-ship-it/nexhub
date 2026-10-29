@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../../../core/ui/feedback.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/data/database.dart';
@@ -85,10 +87,12 @@ class _SnippetEditorDialogState extends ConsumerState<SnippetEditorDialog> {
                   const Spacer(),
                   if (widget.existing != null)
                     IconButton(
+                      tooltip: 'حذف المقتطف',
                       icon: const Icon(Icons.delete_outline),
                       onPressed: _delete,
                     ),
                   IconButton(
+                    tooltip: 'إغلاق',
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
                   ),

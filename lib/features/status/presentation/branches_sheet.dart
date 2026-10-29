@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/ui/feedback.dart';
+import '../../merge/presentation/conflict_resolver_sheet.dart';
 import '../../git/application/git_providers.dart';
 
 class BranchesSheet extends ConsumerWidget {
@@ -63,7 +65,7 @@ class BranchesSheet extends ConsumerWidget {
                                 ? Icons.radio_button_checked
                                 : Icons.radio_button_off,
                             color: b.isCurrent
-                                ? Colors.green
+                                ? Theme.of(context).colorScheme.primary
                                 : Theme.of(context).colorScheme.outline,
                           ),
                           title: Text(
@@ -126,15 +128,36 @@ class BranchesSheet extends ConsumerWidget {
                                             commitsProvider(repoPath));
                                         ref.invalidate(
                                             statusProvider(repoPath));
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text('تم دمج ${b.name}'),
-                                        ));
+                                        showAppSnackBar(
+                                          context,
+                                          'تم دمج ${b.name}',
+                                        );
                                       } else {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          content: Text(r.stderr),
-                                        ));
+                                        // UX audit N-1: فشل الدمج يفتح مُفسّر
+                                        // التعارضات فوراً بدل stderr خام.
+                                        final conflicted =
+                                            await git.conflictedFiles();
+                                        if (!context.mounted) return;
+                                        if (conflicted.isNotEmpty) {
+                                          ref.invalidate(
+                                              statusProvider(repoPath));
+                                          await ConflictResolverSheet.show(
+                                            context,
+                                            repoPath: repoPath,
+                                            files: conflicted,
+                                          );
+                                          ref.invalidate(
+                                              branchesProvider(repoPath));
+                                          ref.invalidate(
+                                              commitsProvider(repoPath));
+                                          ref.invalidate(
+                                              statusProvider(repoPath));
+                                        } else {
+                                          showAppSnackBar(
+                                            context,
+                                            'فشل الدمج: ${r.stderr}',
+                                          );
+                                        }
                                       }
                                     }
                                   },

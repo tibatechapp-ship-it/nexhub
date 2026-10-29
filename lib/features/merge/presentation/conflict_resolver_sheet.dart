@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../git/application/git_providers.dart';
 
+import '../../../core/ui/feedback.dart';
+
 enum _Choice { ours, theirs, both }
 
 class ConflictResolverSheet extends ConsumerStatefulWidget {
@@ -155,7 +157,16 @@ class _ConflictResolverSheetState extends ConsumerState<ConflictResolverSheet> {
                     ),
                   ),
                   TextButton(
-                    onPressed: _abort,
+                    onPressed: () async {
+                      // UX audit: abort discards in-progress resolution — confirm first.
+                      final ok = await confirmAction(
+                        context,
+                        title: 'إحباط الدمج؟',
+                        message: 'سيتم التراجع عن الدمج وإلغاء كل قراراتك الحالية.',
+                        confirmLabel: 'إحباط',
+                      );
+                      if (ok) _abort();
+                    },
                     child: const Text('إحباط الدمج'),
                   ),
                 ],

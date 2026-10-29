@@ -3,7 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/l10n/locale_provider.dart';
 import '../../ai/data/ai_settings.dart';
+
+/// أيقونة سهم متوافقة مع الاتجاه الحالي — بدل chevron_left الثابت
+/// الذي كان يفترض RTL دائماً (تدقيق UX §5.2).
+Widget directionAwareChevron(BuildContext context) => Icon(
+      Directionality.of(context) == TextDirection.rtl
+          ? Icons.chevron_left
+          : Icons.chevron_right,
+    );
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -20,7 +29,11 @@ class SettingsPage extends ConsumerWidget {
           ListTile(
             leading: Icon(
               ai.isConfigured ? Icons.check_circle : Icons.error_outline,
-              color: ai.isConfigured ? Colors.green : Colors.orange,
+              // UX audit: ألوان حالة من الثيم بدل Colors.green/orange الصلبة
+              // (الأخضر الصلب ≈ 2.1:1 على السطح الفاتح — §5.2).
+              color: ai.isConfigured
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.error,
             ),
             title: const Text('إعدادات AI'),
             subtitle: Text(
@@ -28,15 +41,22 @@ class SettingsPage extends ConsumerWidget {
                   ? '${ai.model} @ ${ai.baseUrl}'
                   : 'غير مهيأ — اضبط المفتاح والرابط',
             ),
-            trailing: const Icon(Icons.chevron_left),
+            trailing: directionAwareChevron(context),
             onTap: () => _editAi(context, ref, ai),
           ),
           ListTile(
             leading: const Icon(Icons.auto_awesome),
             title: const Text('Nexus AI (مزودات)'),
             subtitle: const Text('DeepSeek, Qwen, MiniMax, Z.ai, مخصص'),
-            trailing: const Icon(Icons.chevron_left),
+            trailing: directionAwareChevron(context),
             onTap: () => context.push('/nexus'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.language),
+            title: Text(l.language),
+            subtitle: Text(l.languageDesc),
+            trailing: directionAwareChevron(context),
+            onTap: () => _pickLanguage(context, ref),
           ),
           const Divider(),
           const ListTile(
@@ -55,6 +75,40 @@ class SettingsPage extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  /// UX audit (المرحلة 3): مبدّل لغة يحفظ الاختيار عبر appLocaleProvider.
+  Future<void> _pickLanguage(BuildContext context, WidgetRef ref) async {
+    final l = AppLocalizations.of(context);
+    final current = ref.read(appLocaleProvider).code;
+    final chosen = await showDialog<String>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: Text(l.language),
+        children: [
+          RadioListTile<String>(
+            value: 'ar',
+            groupValue: current,
+            onChanged: (v) => Navigator.pop(ctx, v),
+            title: Text(l.langArabic),
+          ),
+          RadioListTile<String>(
+            value: 'en',
+            groupValue: current,
+            onChanged: (v) => Navigator.pop(ctx, v),
+            title: Text(l.langEnglish),
+          ),
+          RadioListTile<String>(
+            value: 'system',
+            groupValue: current,
+            onChanged: (v) => Navigator.pop(ctx, v),
+            title: Text(l.langSystem),
+          ),
+        ],
+      ),
+    );
+    if (chosen == null || chosen == current) return;
+    await ref.read(appLocaleProvider.notifier).setLocale(chosen);
   }
 
   Future<void> _editAi(

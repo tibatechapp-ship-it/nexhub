@@ -25,6 +25,7 @@ class FileSearchDelegate extends SearchDelegate<File?> {
   List<Widget> buildActions(BuildContext context) => [
         if (query.isNotEmpty)
           IconButton(
+            tooltip: 'مسح البحث',
             icon: const Icon(Icons.clear),
             onPressed: () {
               query = '';
@@ -35,6 +36,7 @@ class FileSearchDelegate extends SearchDelegate<File?> {
 
   @override
   Widget buildLeading(BuildContext context) => IconButton(
+        tooltip: 'رجوع',
         icon: const Icon(Icons.arrow_back),
         onPressed: () => close(context, null),
       );

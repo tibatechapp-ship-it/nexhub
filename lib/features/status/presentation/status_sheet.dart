@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../git/application/git_providers.dart';
+
+import '../../../core/ui/feedback.dart';
 import '../../git/data/git_service.dart';
 
 class StatusSheet extends ConsumerStatefulWidget {
@@ -47,9 +49,7 @@ class _StatusSheetState extends ConsumerState<StatusSheet> {
       ref.invalidate(statusProvider(widget.repoPath));
       ref.invalidate(commitsProvider(widget.repoPath));
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم إنشاء commit')),
-      );
+      showAppSnackBar(context, 'تم إنشاء commit');
     } else {
       _err(commitResult.stderr);
     }
@@ -58,14 +58,27 @@ class _StatusSheetState extends ConsumerState<StatusSheet> {
   void _err(String msg) {
     if (!mounted) return;
     setState(() => _busy = false);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    showAppSnackBar(context, msg);
   }
 
   @override
   Widget build(BuildContext context) {
     final status = ref.watch(statusProvider(widget.repoPath));
 
-    return DraggableScrollableSheet(
+    // UX audit: dismissing the sheet silently destroyed a typed commit message.
+    return PopScope(
+      canPop: _msgCtrl.text.trim().isEmpty,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || _msgCtrl.text.trim().isEmpty) return;
+        final ok = await confirmAction(
+          context,
+          title: 'تجاهل رسالة الـ commit؟',
+          message: 'لقد كتبت رسالة commit ولم تُلتزم بعد. الإغلاق سيُفقد النص.',
+          confirmLabel: 'تجاهل',
+        );
+        if (ok && context.mounted) Navigator.pop(context);
+      },
+      child: DraggableScrollableSheet(
       expand: false,
       initialChildSize: 0.7,
       maxChildSize: 0.95,
@@ -165,6 +178,7 @@ class _StatusSheetState extends ConsumerState<StatusSheet> {
           ],
         );
       },
+      ),
     );
   }
 
@@ -189,7 +203,9 @@ class _StatusSheetState extends ConsumerState<StatusSheet> {
       subtitle: Text(e.statusLabel),
       secondary: Icon(
         e.staged ? Icons.check_circle : Icons.circle_outlined,
-        color: e.staged ? Colors.green : Theme.of(context).colorScheme.outline,
+        color: e.staged
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.outline,
       ),
     );
   }

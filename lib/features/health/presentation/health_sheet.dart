@@ -66,6 +66,7 @@ class _HealthSheetState extends State<HealthSheet> {
                       style: Theme.of(context).textTheme.titleLarge),
                   const Spacer(),
                   IconButton(
+                    tooltip: 'إعادة الفحص',
                     icon: const Icon(Icons.refresh),
                     onPressed: () {
                       setState(() => _report = null);

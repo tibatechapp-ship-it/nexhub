@@ -65,6 +65,7 @@ class _ReviewSheetState extends ConsumerState<ReviewSheet> {
                       style: Theme.of(context).textTheme.titleLarge),
                   const Spacer(),
                   IconButton(
+                    tooltip: 'إغلاق',
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
                   ),

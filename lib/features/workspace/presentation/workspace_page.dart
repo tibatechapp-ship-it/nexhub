@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/app_localizations.dart';
+import '../../../core/ui/feedback.dart';
 import '../../../shared/data/database.dart';
 import '../application/workspace_providers.dart';
 import 'add_workspace_dialog.dart';
@@ -28,7 +29,8 @@ class WorkspacePage extends ConsumerWidget {
             );
           }
           return RefreshIndicator(
-            onRefresh: () async {},
+            // UX audit: was a fake no-op spinner — reload from the database now.
+            onRefresh: () async => ref.invalidate(workspacesStreamProvider),
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: repos.length,
@@ -167,8 +169,18 @@ class _RepoTile extends ConsumerWidget {
               IconButton(
                 tooltip: l.removeWorkspace,
                 icon: const Icon(Icons.delete_outline),
-                onPressed: () =>
-                    ref.read(workspaceRepositoryProvider).remove(repo.id),
+                onPressed: () async {
+                  // UX audit: destructive action now requires confirmation.
+                  final ok = await confirmAction(
+                    context,
+                    title: l.removeWorkspace,
+                    message: 'سيتم إزالة "${repo.name}" من القائمة فقط دون حذف الملفات من القرص.',
+                    confirmLabel: 'إزالة',
+                  );
+                  if (ok && context.mounted) {
+                    await ref.read(workspaceRepositoryProvider).remove(repo.id);
+                  }
+                },
               ),
             ],
           ),
