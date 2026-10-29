@@ -86,23 +86,25 @@ class SettingsPage extends ConsumerWidget {
       builder: (ctx) => SimpleDialog(
         title: Text(l.language),
         children: [
-          RadioListTile<String>(
-            value: 'ar',
+          RadioGroup<String>(
             groupValue: current,
             onChanged: (v) => Navigator.pop(ctx, v),
-            title: Text(l.langArabic),
-          ),
-          RadioListTile<String>(
-            value: 'en',
-            groupValue: current,
-            onChanged: (v) => Navigator.pop(ctx, v),
-            title: Text(l.langEnglish),
-          ),
-          RadioListTile<String>(
-            value: 'system',
-            groupValue: current,
-            onChanged: (v) => Navigator.pop(ctx, v),
-            title: Text(l.langSystem),
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  value: 'ar',
+                  title: Text(l.langArabic),
+                ),
+                RadioListTile<String>(
+                  value: 'en',
+                  title: Text(l.langEnglish),
+                ),
+                RadioListTile<String>(
+                  value: 'system',
+                  title: Text(l.langSystem),
+                ),
+              ],
+            ),
           ),
         ],
       ),
