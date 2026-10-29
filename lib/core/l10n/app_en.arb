@@ -25,5 +25,10 @@
   "historyEmpty": "No history yet",
   "snippetsEmpty": "No snippets yet",
   "binaryFile": "Binary file",
-  "fileTooLarge": "File too large"
+  "fileTooLarge": "File too large",
+  "language": "Language",
+  "languageDesc": "العربية / English / System",
+  "langArabic": "العربية",
+  "langEnglish": "English",
+  "langSystem": "System default"
 }

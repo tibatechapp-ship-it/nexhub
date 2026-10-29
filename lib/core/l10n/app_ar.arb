@@ -25,5 +25,10 @@
   "historyEmpty": "لا يوجد سجل بعد",
   "snippetsEmpty": "لا توجد مقتطفات بعد",
   "binaryFile": "ملف ثنائي",
-  "fileTooLarge": "الملف كبير جداً"
+  "fileTooLarge": "الملف كبير جداً",
+  "language": "اللغة",
+  "languageDesc": "العربية / English / حسب النظام",
+  "langArabic": "العربية",
+  "langEnglish": "English",
+  "langSystem": "حسب النظام"
 }

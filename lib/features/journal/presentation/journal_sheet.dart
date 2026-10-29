@@ -91,6 +91,7 @@ class _JournalSheetState extends ConsumerState<JournalSheet> {
                     ),
                   ),
                   IconButton(
+                    tooltip: 'إغلاق المذكرات',
                     icon: const Icon(Icons.close),
                     onPressed: () => Navigator.pop(context),
                   ),

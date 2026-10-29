@@ -14,7 +14,13 @@ class FileListTile extends StatelessWidget {
       leading: Icon(item.isDirectory ? Icons.folder : Icons.insert_drive_file),
       title: Text(item.name),
       subtitle: Text(item.isDirectory ? 'مجلد' : '${item.size} bytes'),
-      trailing: item.isDirectory ? null : IconButton(icon: const Icon(Icons.delete), onPressed: onDelete),
+      trailing: item.isDirectory
+          ? null
+          : IconButton(
+              tooltip: 'حذف ${item.name}',
+              icon: const Icon(Icons.delete),
+              onPressed: onDelete,
+            ),
       onTap: onTap,
     );
   }

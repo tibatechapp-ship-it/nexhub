@@ -195,6 +195,7 @@ class _BrowserPageState extends ConsumerState<BrowserPage> {
                           child: Row(
                             children: [
                               IconButton(
+                                tooltip: 'رجوع لقائمة الملفات',
                                 icon: const Icon(Icons.arrow_back),
                                 onPressed: () => setState(() => _selected = null),
                               ),
