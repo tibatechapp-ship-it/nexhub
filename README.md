@@ -64,6 +64,19 @@
 
 Android · iOS · Windows · Linux — كودبيس واحد (Flutter).
 
+## الموقع (site/)
+
+`site/` يحوي دليل **إعداد بيئة المطور المحلية** (React + Vite + Tailwind 4، عربي RTL):
+Ollama للنماذج المحلية + MCP لربط الأدوات + Semgrep للفحص الأمني — مدمج من مستودع
+`olmo` بتاريخه الكامل عبر git subtree.
+
+```bash
+cd site && npm ci && npm run dev   # http://localhost:3000
+```
+
+يُنشر تلقائياً إلى GitHub Pages من `.github/workflows/site.yml` عند أي تغيير داخل `site/`:
+<https://tibatechapp-ship-it.github.io/nexhub/>
+
 ## المتطلبات
 
 - Flutter ≥ 3.24

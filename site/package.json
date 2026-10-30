@@ -1,0 +1,26 @@
+{
+  "name": "nexhub-site",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "موقع دليل إعداد بيئة المطور المحلية (Ollama + MCP + Semgrep) — مدمج في مستودع NexHub تحت site/",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.7",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "tailwindcss": "^4.1.7",
+    "typescript": "^5.7.0",
+    "vite": "^6.3.5"
+  }
+}
