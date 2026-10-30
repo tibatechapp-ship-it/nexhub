@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   const AppTheme._();
@@ -12,7 +11,9 @@ class AppTheme {
   static ThemeData _build(Brightness b) {
     final scheme = ColorScheme.fromSeed(seedColor: _seed, brightness: b);
     final base = ThemeData(useMaterial3: true, colorScheme: scheme);
-    final text = GoogleFonts.cairoTextTheme(base.textTheme);
+    // خط Cairo مضمّن في الأصول (assets/fonts) — بلا أي جلب شبكي:
+    // يعمل offline فوراً من أول تشغيل، والاختبارات حتمية بلا شبكة.
+    final text = base.textTheme.apply(fontFamily: 'Cairo');
 
     return base.copyWith(
       textTheme: text,
