@@ -7,6 +7,15 @@
 منصة Git محلية عربية للمطورين — بديل لـ GitHub/GitLab/Gitea
 يعمل على جهازك، بدون حساب، بدون سحابة، RTL أصلي.
 
+## ما هو NexHub؟ (تعريف المنتج)
+
+**NexHub = مساحة عمل تطوير محلية عربية**: عميل Git كامل + لوحة مستودعات + أدوات المطور اليومية، في تطبيق واحد يعمل **بلا حساب ولا سحابة ولا إنترنت**.
+
+- **لمن**: المطور العربي والفرق الصغيرة الذين يريدون واجهة عربية RTL أصلية لإدارة مستودعاتهم — أو يعملون في بيئات مقيدة الشبكة.
+- **ما ليس**: ليس استضافة سحابية ولا بديلاً عن خوادم GitHub — بل **طبقة واجهة عربية فوق Git على جهازك**؛ الكود لا يترك الجهاز أبداً.
+- **التمايز**: العربية أولاً (RTL أصلي لا ترجمة لاحقة) + الخصوصية المطلقة (بلا حساب، بلا تتبع) + ثيم فاتح/داكن/النظام محفوظ محلياً.
+- **الحالة بصراحة**: analyze صفر و38 اختباراً وCI أخضر مع نشر موقع التوثيق على Pages. القرار المتبقي على مستوى المنتج: تعميق هوية «مساحة العمل المحلية» في السرد والتجربة.
+
 <p align="center">
   <a href="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/ci.yml"><img src="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/build.yml"><img src="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/build.yml/badge.svg" alt="Build"></a>
