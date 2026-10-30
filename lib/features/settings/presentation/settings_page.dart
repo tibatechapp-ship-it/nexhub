@@ -59,13 +59,53 @@ class SettingsPage extends ConsumerWidget {
             trailing: directionAwareChevron(context),
             onTap: () => _pickLanguage(context, ref),
           ),
-          // الوضع الليلي — اختيار فاتح/داكن/حسب النظام محفوظ في SharedPreferences
-          ListTile(
-            leading: const Icon(Icons.brightness_6_outlined),
-            title: const Text('المظهر'),
-            subtitle: Text(_themeLabel(ref.read(appThemeModeProvider).code)),
-            trailing: directionAwareChevron(context),
-            onTap: () => _pickTheme(context, ref),
+          // الوضع الليلي — مبدّل SegmentedButton (Material 3):
+          // فاتح / داكن / حسب النظام — يُطبَّق فوراً ويُحفظ في
+          // SharedPreferences (nexhub_theme_mode) عبر appThemeModeProvider.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.brightness_6_outlined,
+                      size: 20,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 12),
+                    const Text('المظهر'),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                SegmentedButton<String>(
+                  segments: const [
+                    ButtonSegment(
+                      value: 'light',
+                      label: Text('فاتح'),
+                      icon: Icon(Icons.light_mode_outlined),
+                    ),
+                    ButtonSegment(
+                      value: 'dark',
+                      label: Text('داكن'),
+                      icon: Icon(Icons.dark_mode_outlined),
+                    ),
+                    ButtonSegment(
+                      value: 'system',
+                      label: Text('حسب النظام'),
+                      icon: Icon(Icons.settings_suggest_outlined),
+                    ),
+                  ],
+                  selected: {ref.watch(appThemeModeProvider).code},
+                  onSelectionChanged: (selection) {
+                    ref
+                        .read(appThemeModeProvider.notifier)
+                        .setMode(selection.first);
+                  },
+                ),
+              ],
+            ),
           ),
           const Divider(),
           const ListTile(
@@ -120,53 +160,6 @@ class SettingsPage extends ConsumerWidget {
     );
     if (chosen == null || chosen == current) return;
     await ref.read(appLocaleProvider.notifier).setLocale(chosen);
-  }
-
-  /// مبدّل مظهر (وضع ليلي) يحفظ الاختيار عبر appThemeModeProvider —
-  /// بنفس نمط مبدّل اللغة أعلاه (RadioGroup + SimpleDialog).
-  Future<void> _pickTheme(BuildContext context, WidgetRef ref) async {
-    final current = ref.read(appThemeModeProvider).code;
-    final chosen = await showDialog<String>(
-      context: context,
-      builder: (ctx) => SimpleDialog(
-        title: const Text('المظهر'),
-        children: [
-          RadioGroup<String>(
-            groupValue: current,
-            onChanged: (v) => Navigator.pop(ctx, v),
-            child: Column(
-              children: const [
-                RadioListTile<String>(
-                  value: 'light',
-                  title: Text('فاتح'),
-                ),
-                RadioListTile<String>(
-                  value: 'dark',
-                  title: Text('داكن (وضع ليلي)'),
-                ),
-                RadioListTile<String>(
-                  value: 'system',
-                  title: Text('حسب النظام'),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    if (chosen == null || chosen == current) return;
-    await ref.read(appThemeModeProvider.notifier).setMode(chosen);
-  }
-
-  static String _themeLabel(String code) {
-    switch (code) {
-      case 'light':
-        return 'فاتح';
-      case 'dark':
-        return 'داكن';
-      default:
-        return 'حسب النظام';
-    }
   }
 
   Future<void> _editAi(

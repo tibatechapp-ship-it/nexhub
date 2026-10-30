@@ -38,6 +38,13 @@
 - 🌐 مبدّل لغة (عربي/إنجليزي/النظام) محفوظ في التفضيلات
 - ⚔️ مُفسّر تعارضات دمج يُفتح تلقائياً عند الفشل
 - ♿ tooltips لكل أزرار الأيقونات + تأكيدات إتلاف + حفظ بـCtrl+S
+- 🌙 الوضع الليلي — مبدّل SegmentedButton (فاتح/داكن/حسب النظام) محفوظ في التفضيلات
+
+## التراخيص
+
+- خط Cairo المضمّن في `assets/fonts/` مرخّص بموجب
+  [SIL Open Font License 1.1](https://openfontlicense.org) — النص الكامل في
+  [`assets/fonts/OFL.txt`](assets/fonts/OFL.txt).
 
 ## Nexus Agent
 

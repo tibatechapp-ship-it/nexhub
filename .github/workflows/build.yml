@@ -22,7 +22,12 @@ jobs:
       - run: flutter pub get
       - name: Generate localizations
         run: flutter gen-l10n
-      - run: flutter create --platforms=linux,windows,macos,android .
+      # ملاحظة: flutter create . محذوفة من وظيفة التحليل عمداً — هي أداة
+      # تهيئة تُستخدم مرة واحدة عند بدء المشروع، وإعادة توليد مجلدات
+      # المنصات في كل build تعيد كتابة أي تخصيصات يدوية (نمط Rasan).
+      # التحليل والاختبار لا يحتاجان مجلدات المنصات أصلاً. تبقى خطوة
+      # create في وظيفتي build/android فقط لأنهما يبنيان artifacts
+      # حقيقية ومجلدات المنصات غير مرفوعة إلى Git في هذا المشروع بعد.
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: flutter gen-l10n
       - run: flutter analyze --fatal-infos
@@ -54,6 +59,9 @@ jobs:
       - run: flutter pub get
       - name: Generate localizations
         run: flutter gen-l10n
+      # flutter create حِملية هنا: مجلدات المنصات غير مرفوعة إلى Git —
+      # تولّد مجلدات البناء لكل منصة قبل بناء الـ artifact فعلياً.
+      # (إن رُفعت المجلدات مستقبلاً فاحذف هذا السطر واستبدله بخطوة تحقق.)
       - run: flutter create --platforms=linux,windows,macos,android .
       - name: Fix Windows CMakeLists
         if: runner.os == 'Windows'
@@ -95,6 +103,7 @@ jobs:
       - run: flutter pub get
       - name: Generate localizations
         run: flutter gen-l10n
+      # flutter create حِملية هنا أيضاً — انظر التعليق في وظيفة build.
       - run: flutter create --platforms=linux,windows,macos,android .
       - name: Patch Kotlin version
         run: |
