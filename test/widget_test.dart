@@ -18,9 +18,13 @@ void main() {
       expect(AppTheme.dark.colorScheme.brightness, Brightness.dark);
     });
 
-    test('نفس البذرة اللونية للاثنين — هوية بصرية موحدة', () {
-      expect(AppTheme.light.colorScheme.primary,
-          AppTheme.dark.colorScheme.primary);
+    test('الوضعان متقابلان فعلاً — سطوع السطح فاتح/داكن', () {
+      // ColorScheme.fromSeed يعطي tones مختلفة عمداً لكل سطوع —
+      // المهم أن الفاتح ساطع والداكن معتم (جودة الوضع الليلي).
+      expect(AppTheme.light.colorScheme.surface.computeLuminance() > 0.5,
+          isTrue);
+      expect(AppTheme.dark.colorScheme.surface.computeLuminance() < 0.5,
+          isTrue);
     });
 
     test('عناصر مشتركة لا تتغير بين الوضعين (elevation/الشكل)', () {
