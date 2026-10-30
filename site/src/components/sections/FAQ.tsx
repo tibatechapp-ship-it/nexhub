@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useScrollAnimation } from '../hooks/useScrollAnimation';
+import { useScrollAnimation } from '../../hooks/useScrollAnimation';
 
 interface FAQItem {
   question: string;
@@ -33,7 +33,7 @@ const faqData: FAQItem[] = [
   },
 ];
 
-export default function FAQSection() {
+export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const { ref, isVisible } = useScrollAnimation(0.1);
 
