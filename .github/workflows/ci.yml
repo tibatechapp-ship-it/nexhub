@@ -25,3 +25,12 @@ jobs:
       - name: Secrets
         uses: gitleaks/gitleaks-action@v3
         continue-on-error: true
+
+  docs:
+    # خارطة المنتَجة أسبوع 2: «رابط تحقق الحياة» — الدليل المصوّر لا ينكسر
+    name: quickstart docs guard
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate quickstart-ar (existence + images + relative links)
+        run: python3 tool/check_docs.py

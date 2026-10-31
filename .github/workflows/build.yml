@@ -125,3 +125,39 @@ jobs:
         with:
           name: nexhub-android
           path: build/app/outputs/flutter-apk/*.apk
+
+  release:
+    # خارطة المنتَجة أسبوع 2: إصدار مُوسوم يُرفق حزمه تلقائياً (APK + MSIX/سطح المكتب).
+    # يعمل فقط عند دفع tag v* — الأفرع العادية تكتفي بالـartifacts أعلاه.
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build, android]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          path: artifacts
+      - name: Attach artifacts to the tag release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          # APK الحقيقي المبني (split-per-abi) — ما يثبّته المستخدم فعلاً
+          mkdir -p dist
+          find artifacts/nexhub-android -name '*.apk' -exec cp {} dist/ \; 2>/dev/null || true
+          # حزم سطح المكتب مضغوطة (قد تكون ناقصة على منصة فاشلة — لا نصنعها زوراً)
+          for a in nexhub-linux-x64 nexhub-windows-x64 nexhub-macos; do
+            if [ -d "artifacts/$a" ] && [ -n "$(ls -A "artifacts/$a" 2>/dev/null)" ]; then
+              (cd artifacts && zip -qr "$OLDPWD/dist/$a.zip" "$a")
+            fi
+          done
+          if [ -z "$(ls -A dist 2>/dev/null)" ]; then
+            echo "::error::لا توجد حزم للإرفاق — تحقق من وظائف البناء"; exit 1
+          fi
+          ls -la dist
+          gh release create "$TAG" dist/* \
+            --title "NexHub $TAG" \
+            --notes "حزم الإصدار $TAG — من [خارطة المنتَجة](https://github.com/tibatechapp-ship-it/vixona-github-profile/blob/main/docs/productization-plan.md): onboarding + quickstart مصوّر. التثبيت: [البدء السريع](https://github.com/tibatechapp-ship-it/nexhub/blob/main/docs/quickstart-ar.md)." \
+            --latest

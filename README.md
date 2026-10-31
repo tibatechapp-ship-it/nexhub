@@ -13,7 +13,7 @@
 - **لمن**: المطوّر العربي والفرق الصغيرة الذين يريدون واجهة عربية RTL أصلية لإدارة مستودعاتهم — أو يعملون في بيئات مقيدة الشبكة، والمبتدئ الذي تخيفه واجهات Git الإنجليزية.
 - **ما ليس**: ليس استضافة سحابية ولا بديلاً عن خوادم GitHub — بل **طبقة واجهة عربية فوق Git على جهازك**؛ الكود لا يترك الجهاز أبداً. حيادها عن السحابة ميزة لا نقص.
 - **التمايز**: العربية أولاً (RTL أصلي لا ترجمة لاحقة) + الخصوصية المطلقة (بلا حساب، بلا تتبع) + «افتح المجلد وابدأ» بلا تسجيل.
-- **الحالة بصراحة**: analyze صفر و38 اختباراً وCI أخضر مع نشر موقع التوثيق على Pages. القادم معلن في [خارطة المنتَجة](https://github.com/tibatechapp-ship-it/vixona-github-profile/blob/main/docs/productization-plan.md): جولة onboarding سرد ذاتي + دليل سريع مصوّر + إصدار v0.4.
+- **الحالة بصراحة**: analyze صفر و45 اختباراً وCI أخضر مع نشر موقع التوثيق على Pages — وجولة onboarding والبدء السريع المصوّر منجزان بإثبات ([quickstart-ar](docs/quickstart-ar.md)). الإصدار [v1.1.0](https://github.com/tibatechapp-ship-it/nexhub/releases) يرفق حزمه تلقائياً على كل tag.
 
 <p align="center">
   <a href="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/ci.yml"><img src="https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
@@ -30,7 +30,9 @@
 
 | القدرة | الدليل القابل للتحقق |
 |---|---|
-| جودة محكمة | `flutter analyze` = **صفر ملاحظات** (بوابة CI) + **38/38 اختبار** خضراء |
+| جودة محكمة | `flutter analyze` = **صفر ملاحظات** (بوابة CI) + **45/45 اختبار** خضراء |
+| بدء سريع مصوّر | [docs/quickstart-ar.md](docs/quickstart-ar.md) + مخطط الطريق الذهبي — حرس وجود/صور/روابط في وظيفة `docs` بالـCI |
+| جولة أول تشغيل | onboarding 5 خطوات بتوجيه تلقائي — 7 اختبارات widget حتمية |
 | CI مزدوج | [CI](https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/ci.yml) + [Build](https://github.com/tibatechapp-ship-it/nexhub/actions/workflows/build.yml) أخضران على main |
 | موقع منشور | دليل بيئة المطور على [GitHub Pages](https://tibatechapp-ship-it.github.io/nexhub/) — ينشر تلقائياً من `site/` |
 | إصدارات | إصدارات مُوسومة في [Releases](https://github.com/tibatechapp-ship-it/nexhub/releases) — منها v1.0.0 |
@@ -103,9 +105,11 @@ flutter test              # 38 اختباراً (git_service، nexus_tools، ...
 ## 🗺️ القادم
 
 من [خارطة المنتَجة](https://github.com/tibatechapp-ship-it/vixona-github-profile/blob/main/docs/productization-plan.md):
-1. **جولة onboarding** أول تشغيل: 5 خطوات من «أنشئ مستودعاً» إلى «أول commit» — مُختبَرة widget-wise
-2. **دليل سريع مصوّر** عربي (`docs/quickstart-ar.md`)
-3. **إصدار v0.4** بالتحسينات أعلاه
+1. ~~جولة onboarding~~ ✓ (v1.1.0 — 7 اختبارات widget)
+2. ~~دليل سريع مصوّر عربي~~ ✓ (v1.1.0 — بحرس CI)
+3. ~~إصدار بالتحسينات~~ ✓ (v1.1.0 — حزم تُرفق آلياً على كل tag)
+
+الأسبوعان القادمان من الخطة: أسماء أوضح للنسخ الاحتياطية المحلية + تحسينات UX من ملاحظات أول مستخدم.
 
 ## 🤝 المساهمة
 
