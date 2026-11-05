@@ -138,7 +138,7 @@ jobs:
       # gh release create يحتاج سياق git — بلا checkout يفشل
       # بـ«fatal: not a git repository» (كُشف في أول تشغيل v1.1.0)
       - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
       - name: Attach artifacts to the tag release
