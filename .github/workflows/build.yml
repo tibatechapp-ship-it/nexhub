@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.9'
+          flutter-version: '3.44.9'
           channel: stable
       - run: flutter pub get
       - name: Generate localizations
@@ -54,7 +54,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.9'
+          flutter-version: '3.44.9'
           channel: stable
       - run: flutter pub get
       - name: Generate localizations
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.41.9'
+          flutter-version: '3.44.9'
           channel: stable
       - run: flutter pub get
       - name: Generate localizations
